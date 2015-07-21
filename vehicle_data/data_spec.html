@@ -6,35 +6,59 @@
     <script src='https://www.w3.org/Tools/respec/respec-w3c-common'
             class='remove'></script>
     <script class="remove">
-      var respecConfig = {
-          specStatus:           "BG-DRAFT",
+     var respecConfig = {
+          specStatus:           "ED",
           shortName:            "vehicle-data",
-          publishDate:          "",
-          previousPublishDate:  "2014-11-24",
-          previousMaturity:     "BG-FINAL",
-          edDraftURI:           "",
-          // lcEnd:                "",
-          crEnd:                "",
-          editors:  [
-              { name: "Kevron Rees", company: "Intel",
-                      companyURL: "http://www.intel.com" },
-              { name: "Justin (Jong Seon) Park", company: "LG Electronics",
-                      companyURL: "http://www.lg.com"}
-         ],
-          inlineCSS:    true,
-          noIDLIn:      true,
-          wg:           "Automotive and Web Platform Business Group",
-          wgURI:        "http://www.w3.org/community/autowebplatform/",
-          wgPublicList: "public-autowebplatform",
-          wgPatentURI:  "",
+          editors:  [{ 
+            name: "이원석(Wonsuk Lee)", company: "ETRI",
+            url: "mailto:wonsuk.lee@etri.re.kr",
+            companyURL: "http://www.etri.re.kr" 
+          }, {
+            name: "Qing An", company: "Alibaba Group",
+            url: "mailto:anqing.aq@alibaba-inc.com",
+            companyURL: "http://www.alibaba.com/" 
+          }, {
+            name: "Adam Crofts", company: "Jaguar Land Rover",
+            url: "mailto:acrofts1@jaguarlandrover.com",
+            companyURL: "http://www.jaguarlandrover.com/" 
+          }, {
+            name: "Kevin Gavigan", company: "Jaguar Land Rover",
+            url: "mailto:kgavigan@jaguarlandrover.com",
+            companyURL: "http://www.jaguarlandrover.com/"              
+          }, {
+            name: "Justin (Jong Seon) Park", company: "LG Electronics",
+            url: "mailto:wonsuk.lee@etri.re.kr",
+            companyURL: "http://www.lg.co.kr/"              
+	  }, {
+            name: "Kevron Rees (until November 2014)", company: "Intel",
+            url: "",
+            companyURL: "http://www.intel.com/"              
+          }],
+          edDraftURI:           "http://rawgit.com/w3c/automotive/master/vehicle_data/data_spec.html",
 
-          localBiblio:  {
-              "VIN": {
-                  title:    "Vehicle Identificaiton Number"
-              ,   href:     "http://en.wikipedia.org/wiki/Vehicle_Identification_Number#World_Manufacturer_Identifier"
-              ,   publisher:  "Wikipedia"
-              }
-          }
+          otherLinks: [{
+            key: 'Repository and Participation',
+            data: [
+                {
+                    value: 'We are on github.',
+                    href: 'https://github.com/w3c/automotive/'
+                }, {
+                    value: 'File a bug/issue.',
+                    href: 'https://github.com/w3c/automotive/issues'
+                }, {
+                    value: 'Commit history.',
+                    href: 'https://github.com/w3c/automotive/commits'
+                }, {
+                    value: 'Mailing list archive.',
+                    href: 'https://lists.w3.org/Archives/Public/public-automotive/'
+                }
+             ]
+          }],
+
+          wg:           "Automotive Working Group",
+          wgURI:        "http://www.w3.org/auto/wg/",
+          wgPublicList: "public-automotive",
+          wgPatentURI: "http://www.w3.org/2004/01/pp-impl/76043/status",
       };
     </script>
   </head>
@@ -42,24 +66,26 @@
   <body>
 
 
-<!------------------------------ Abstract ------------------------------------>
+<!-- Abstract -->
 <section id="abstract">
   <p>
-  This specification defines a standard for Vehicle Data which might be available in a vehicle.  It is designed to be used in conjunction with the <a href="vehicle_spec.html">Vehicle API Specification</a>.
+  This specification defines a standard for Vehicle Data which might be available in a vehicle.  It is designed to be used in conjunction with the <a href="http://www.w3.org/TR/vehicle-information-api">Vehicle API Specification</a>.
 </section>
 
-<!----------------------- Status of this document ---------------------------->
+<!-- Status of this document -->
 <section id="sotd">
 </section>
 
-<!----------------------------- Introduction --------------------------------->
+<!-- Introduction -->
 <section class="informative">
   <h2>Introduction</h2>
-  <p>Each data type is accessed through a <a href="vehicle_spec.html#vehicleinterface-interface">VehicleInterface</a> attribute available on the <a href="vehicle_spec.html#vehicle-interface">navigator.vehicle</a> object.  The attribute name corresponds with the Vehicle Type. For example, the attribute <a href="#widl-Vehicle-vehicleSpeed">"vehicle.vehicleSpeed"</a> is the interface to the data type <a href="#vehiclespeed-interface">"VehicleSpeed"</a>.</p>
+  <p>Each data type is accessed through a <a href="http://www.w3.org/TR/vehicle-information-api/#vehicleinterface-interface">VehicleInterface</a> attribute available on the <a href="http://www.w3.org/TR/vehicle-information-api/#vehicle-interface">navigator.vehicle</a> object.  The attribute name corresponds with the Vehicle Type. For example, the attribute <a href="#widl-Vehicle-vehicleSpeed">"vehicle.vehicleSpeed"</a> is the interface to the data type <a href="#vehiclespeed-interface">"VehicleSpeed"</a>.</p>
+  
+  <p class="note">If an interface is provided, it MUST implement its non-nullable attributes otherwise it's optional. Many of the non-nullable attributes are found in interfaces with only one attribute (for example, <a href="#vehiclespeed-interface">"VehicleSpeed"</a>).</p>
 
 </section>
 
-<!---------------------------- Conformance ----------------------------------->
+<!-- Conformance -->
 <section id="conformance">
   <p>This specification defines conformance criteria that apply to a single
   product: the <dfn>user agent</dfn> that implements the interfaces that it
@@ -69,16 +95,17 @@
   specification MUST implement them in a manner consistent with the ECMAScript
   Bindings defined in the Web IDL specification [[!WEBIDL]], as this
   specification uses that specification and terminology.</p>
+  
 </section>
 
-<!---------------------------- Extending this API ----------------------------------->
-<section id="Extending">
+<!-- Extending this API -->
+<section id="extending">
   <h3>Extending the Vehicle Data API</h3>
   <p>This specification anticipates that implementors may desire to extend this API and
   define new data types that this specification does not define.  This section provides some
   general guidlines on how extending the API should be done.</p>
 
-  <p>All new data types must have two parts: a <a href="vehicle_spec.html#vehicleinterface-interface">VehicleInterface</a>
+  <p>All new data types must have two parts: a <a href="http://www.w3.org/TR/vehicle-information-api/#vehicleinterface-interface">VehicleInterface</a>
   attributed on the navigator.vehicle object and an interface definition that defines the 
   data type.  The following example describes how one would extend the specification to add
   a "whizzer" data feature.</p>
@@ -93,7 +120,7 @@
     }
   </pre>
   
-  <section id="Extending Existing Data Types">
+  <section id="extending-existing-data-types">
     <h3>Extending Existing Data Types</h3>
     <p>There may also be attributes of a data type interface that an implementor may wish to extend.
     The general guideline here is to add attributes to interfaces that are logically related.  For 
@@ -107,7 +134,7 @@
     </pre>
   </section>
 
-  <section id="Mapping vs Extending">
+  <section id="mapping-vs-extending">
     <h3>Mapping vs. Extending</h3>
     <p>Because vehicle data may be different in a system than what is defined in the specication, it is
     preferable to perform post-processing to translate and map the system data to the defined type.  It
@@ -116,14 +143,14 @@
   </section>
 </section>
 
-<!----------------------------- Terminology ---------------------------------->
+<!-- Terminology -->
 <!--
 <section id="terminology">
   <h2>Terminology</h2>
 </section>
 -->
 
-<!------------------------ Interface VehicleCommonDataType ------------------------>
+<!-- Interface VehicleCommonDataType -->
 <section>
   <h3><a>VehicleCommonDataType</a> Interface</h3> <p>The <a>VehicleCommonDataType</a>
   interface represents the common data type for all vehicle data types</p>
@@ -134,12 +161,15 @@
   </dl>
 </section>
 
-<!---------------- Vehicle Configuration & ID Interfaces --------------------->
+<!-- Vehicle Configuration & ID Interfaces -->
 <section id="configuration-identification-interfaces">
       <h2>Configuration and Identification Interfaces</h2>
 
       <p>Interfaces relating to vehicle configuration and identification including: make, type size, transmission
       configuration, identification numbers, etc...</p>
+      
+      <p class="ednote">Integers have been used in favor of floating point values in order to preserve 
+      precision during calculations (e.g. meters per hour instead of kilometers per hour).</p>
 
       <dl title="partial interface Vehicle" class="idl">
         <!-- identification and configuration types: -->
@@ -158,7 +188,7 @@
       </dl>
 
 
-<!------------------------ Interface Identification ------------------------------>
+<!-- Interface Identification -->
 <section>
   <h3><a>Identification</a> Interface</h3>
   <p>The <a>Identification</a> interface provides identification information about a
@@ -199,7 +229,7 @@
   </dl>
 </section>
 
-<!------------------------ Interface Size Configuration --------------------------->
+<!-- Interface Size Configuration -->
 <section>
   <h3><a>SizeConfiguration</a> Interface</h3>
   <p>The <a>SizeConfiguration</a> interface provides size and shape information about a
@@ -225,7 +255,7 @@
   </dl>
 </section>
 
-<!-------------------- Interface Fuel Configuration --------------------------->
+<!-- Interface Fuel Configuration -->
 <section>
   <h3><a>FuelConfiguration</a> Interface</h3>
   <p>The <a>FuelConfiguration</a> interface provides information about the fuel
@@ -257,11 +287,11 @@
   </dl>
 </section>
 
-<!----------------- Interface Transmission Configuration ------------------->
+<!-- Interface Transmission Configuration -->
 <section>
   <h3><a>TransmissionConfiguration</a> Interface</h3>
   <p>The <a>TransmissionConfiguration</a> interface provides transmission configuration
-  information information about a vehicle.</p>
+  information about a vehicle.</p>
 
 
   <dl title="enum TransmissionGearTypeEnum" class="idl">
@@ -277,7 +307,7 @@
   </dl>
 </section>
 
-<!------------------------ Interface Wheel Configuration ------------------------>
+<!-- Interface Wheel Configuration -->
 <section>
   <h3><a>WheelConfiguration</a> Interface</h3>
 
@@ -291,16 +321,16 @@
   </dl>
 </section>
 
-<!------------------ Interface Steering Wheel Configuration --------------------->
+<!-- Interface Steering Wheel Configuration -->
 <section>
   <h3><a>SteeringWheelConfiguration</a> Interface</h3>
   <p>The <a>SteeringWheelConfiguration</a> interface provides steering wheel configuration
 
-  information information about a vehicle.</p>
+  information about a vehicle.</p>
 
   <dl title="interface SteeringWheelConfiguration : VehicleCommonDataType" class="idl">
-     <dt>readonly attribute boolean? steeringWheelLeft</dt>
-     <dd>MUST return true if steering wheel is on left side of vehicle</dd>
+     <dt>readonly attribute Zone? steeringWheelLocation</dt>
+     <dd>MUST return the location on the steering wheel within the vehicle</dd> 
      <dt>attribute unsigned short? steeringWheelTelescopingPosition</dt>
      <dd>MUST return steering wheel position as percentage of extension from the dash
      (Unit: percentage, 0%:closest to dash, 100%:farthest from dash)
@@ -313,15 +343,18 @@
 </section>
 
 </section>
-<!--------------- End of Vehicle Configuration & ID Interfaces ---------------->
-<!----------------------------------------------------------------------------->
+<!-- End of Vehicle Configuration & ID Interfaces -->
+<!-->
 
-<!----------------------------------------------------------------------------->
-<!---------------------- Running Status Interfaces ---------------------------->
+<!-->
+<!-- Running Status Interfaces -->
 <section id="runningstatus-interfaces">
       <h2>Running Status Interfaces</h2>
       <p>Interfaces relating to the running/operation of a vehicle including:  speed, temperatures, acceleration,
       etc...</p>
+      
+      <p class="ednote">Integers have been used in favor of floating point values in order to preserve 
+      precision during calculations (e.g. meters per hour instead of kilometers per hour).</p>
 
       <dl title="partial interface Vehicle" class="idl">
         <!-- running status types: -->
@@ -363,21 +396,21 @@
         <dd>MUST return VehicleSignalInterface for accessing <a>SteeringWheel</a></dd>
         <dt>readonly attribute VehicleSignalInterface ignitionTime</dt>
         <dd>MUST return VehicleSignalInterface for accessing <a>IgnitionTime</a></dd>
-        <dt>readonly attribute VehicleSignalInterface yawRate</dt>
-        <dd>MUST return VehicleSignalInterface for accessing <a>YawRate</a></dd>
+        <dt>readonly attribute VehicleSignalInterface gyro</dt>
+        <dd>MUST return VehicleSignalInterface for accessing <a>Gyro</a></dd>
         <dt>readonly attribute VehicleSignalInterface brakeOperation</dt>
         <dd>MUST return VehicleSignalInterface for accessing <a>BrakeOperation</a></dd>
         <dt>readonly attribute VehicleSignalInterface wheelTick</dt>
         <dd>MUST return VehicleSignalInterface for accessing <a>WheelTick</a></dd>
         <dt>readonly attribute VehicleSignalInterface buttonEvent</dt>
         <dd>MUST return VehicleSignalInterface for accessing <a>ButtonEvent</a></dd>
-        <dt>readonly attribute VehicleSignalInterface drivingMode</dt>
-        <dd>MUST return VehicleSignalInterface for accessing <a>DrivingMode</a></dd>
+        <dt>readonly attribute VehicleSignalInterface drivingStatus</dt>
+        <dd>MUST return VehicleSignalInterface for accessing <a>DrivingStatus</a></dd>
         <dt>readonly attribute VehicleSignalInterface nightMode</dt>
         <dd>MUST return VehicleSignalInterface for accessing <a>NightMode</a></dd>
       </dl>
 
-<!------------------------ Interface VehicleSpeed ------------------------>
+<!-- Interface VehicleSpeed -->
 <section>
 
   <h3><a>VehicleSpeed</a> Interface</h3>
@@ -391,7 +424,7 @@
   </dl>
 </section>
 
-<!------------------------ Interface WheelSpeed ------------------------>
+<!-- Interface WheelSpeed -->
 <section>
   <h3><a>WheelSpeed</a> Interface</h3>
   <p>The <a>WheelSpeed</a> interface represents wheel speed information.</p>
@@ -405,7 +438,7 @@
   </dl>
 </section>
 
-<!------------------------ Interface EngineSpeed ------------------------>
+<!-- Interface EngineSpeed -->
 <section>
 
   <h3><a>EngineSpeed</a> Interface</h3>
@@ -419,7 +452,7 @@
   </dl>
 </section>
 
-<!------------------------ Interface VehiclePowerModeType ------------------------>
+<!-- Interface VehiclePowerModeType -->
 <section>
   <h3><a>VehiclePowerModeType</a> Interface</h3>
   <p>The <a>VehiclePowerModeType</a> interface represents position of the ignition switch.</p>
@@ -429,11 +462,13 @@
     <dt>off</dt>
     <dd>Off - No power</dd>
     <dt>accessory1</dt>
-    <dd>Accessory power 1</dd>
+    <dd>Accessory power mode 1: Some electronics and modules are powered</dd>
     <dt>accessory2</dt>
-    <dd>Accessory power 2</dd>
+    <dd>Accessory power mode 2: All electronics and modules are powered</dd>
     <dt>running</dt>
-    <dd>Running power</dd>
+    <dd>Power mode during engine running</dd>
+    <dt>cranking</dt>
+    <dd>Power mode during engine cranking</dd>
   </dl>
 
   <dl title="interface VehiclePowerModeType : VehicleCommonDataType"
@@ -443,7 +478,7 @@
   </dl>
 </section>
 
-<!------------------------ Interface PowertrainTorque ------------------------>
+<!-- Interface PowertrainTorque -->
 <section>
   <h3><a>PowertrainTorque</a> Interface</h3>
   <p>The <a>PowertrainTorque</a> interface represents powertrain torque.</p>
@@ -456,7 +491,7 @@
   </dl>
 </section>
 
-<!------------------------ Interface AcceleratorPedalPosition ------------------------>
+<!-- Interface AcceleratorPedalPosition -->
 <section>
   <h3><a>AcceleratorPedalPosition</a> Interface</h3> <p>The <a>AcceleratorPedalPosition</a>
   interface represents the accelerator pedal position.</p>
@@ -469,7 +504,7 @@
   </dl>
 </section>
 
-<!------------------------ Interface ThrottlePosition ------------------------>
+<!-- Interface ThrottlePosition -->
 <section>
   <h3><a>ThrottlePosition</a> Interface</h3> <p>The <a>ThrottlePosition</a>
 
@@ -483,7 +518,7 @@
   </dl>
 </section>
 
-<!------------------------ Interface TripMeters ------------------------>
+<!-- Interface TripMeters -->
 <section>
   <h3><a>Trip</a> Interface</h3> <p>The <a>Trip</a> interface
   represents trip meter.</p>
@@ -492,7 +527,7 @@
     <dt>readonly attribute unsigned long distance</dt>
     <dd>MUST return distance travelled based on trip meter (Unit: meters)</dd>
     <dt>readonly attribute unsigned short? averageSpeed</dt>
-    <dd>MUST return average speed based on trip meter (Unit: kilometers per hour)</dd>
+    <dd>MUST return average speed based on trip meter (Unit: meters per hour)</dd>
     <dt>readonly attribute unsigned short? fuelConsumption</dt>
     <dd>MUST return fuel consumed based on trip meter (Unit: milliliters per 100 kilometers)</dd>
   </dl>
@@ -506,7 +541,7 @@
 
 
 
-<!------------------------ Interface Transmission ------------------------------>
+<!-- Interface Transmission -->
 <section>
   <h3><a>Transmission</a> Interface</h3>
   <p>The <a>Transmission</a> interface represents the current transmission gear and mode.
@@ -537,7 +572,7 @@
   </dl>
 </section>
 
-<!------------------------ Interface CruiseControlStatus ------------------------------>
+<!-- Interface CruiseControlStatus -->
 <section>
   <h3><a>CruiseControlStatus</a> Interface</h3>
   <p>The <a>CruiseControlStatus</a> interface represents cruise control settings.
@@ -545,11 +580,11 @@
      <dt>readonly attribute boolean status</dt>
      <dd>MUST return whether or not the Cruise Control system is on (true) or off (false)</dd>
      <dt>readonly attribute unsigned short speed</dt>
-     <dd>MUST return target Cruise Control speed in kilometers per hour (Unit: kilometers per hour)</dd>
+     <dd>MUST return target Cruise Control speed (Unit: meters per hour)</dd>
   </dl>
 </section>
 
-<!------------------------ Interface LightStatus ------------------------------>
+<!-- Interface LightStatus -->
 <section>
   <h3><a>LightStatus</a> Interface</h3>
   <p>The <a>LightStatus</a> interface represents exterior light statuses.
@@ -579,7 +614,7 @@
   </dl>
 </section>
 
-<!------------------------ Interface InteriorLightStatus ------------------------------>
+<!-- Interface InteriorLightStatus -->
 <section>
   <h3><a>InteriorLightStatus</a> Interface</h3>
   <p>The <a>InteriorLightStatus</a> interface represents interior light status.
@@ -591,7 +626,7 @@
   </dl>
 </section>
 
-<!------------------------ Interface Horn ------------------------------>
+<!-- Interface Horn -->
 <section>
   <h3><a>Horn</a> Interface</h3>
   <p>The <a>Horn</a> interface represents horn status.
@@ -601,7 +636,7 @@
   </dl>
 </section>
 
-<!------------------------ Interface Chime ------------------------------>
+<!-- Interface Chime -->
 <section>
   <h3><a>Chime</a> Interface</h3>
   <p>The <a>Chime</a> interface represents chime status.
@@ -611,7 +646,7 @@
   </dl>
 </section>
 
-<!------------------------ Interface Fuel ------------------------------>
+<!-- Interface Fuel -->
 <section>
   <h3><a>Fuel</a> Interface</h3>
   <p>The <a>Fuel</a> interface represents vehicle fuel status.
@@ -631,15 +666,15 @@
   </dl>
 </section>
 
-<!------------------------ Interface EngineOil ------------------------------>
+<!-- Interface EngineOil -->
 <section>
   <h3><a>EngineOil</a> Interface</h3>
   <p>The <a>EngineOil</a> interface represents engine oil status.
   <dl title="interface EngineOil : VehicleCommonDataType" class="idl">
     <dt>readonly attribute unsigned short level</dt>
-    <dd>MUST return engine oil level (Unit: percentage, 0%: empty, 100%: full</dd>
+    <dd>MUST return engine oil level (Unit: percentage, 0%: empty, 100%: full)</dd>
      <dt>readonly attribute unsigned short lifeRemaining</dt>
-     <dd>MUST return remaining engine oil life (Unit: percentage, 0%:no life remaining, 100%: full life remaining</dd>
+     <dd>MUST return remaining engine oil life (Unit: percentage, 0%:no life remaining, 100%: full life remaining)</dd>
      <dt>readonly attribute long temperature</dt>
      <dd>MUST return Engine Oil Temperature (Unit: celcius)</dd>
      <dt>readonly attribute unsigned short pressure</dt>
@@ -649,7 +684,7 @@
   </dl>
 </section>
 
-<!------------------------ Interface Acceleration ------------------------------>
+<!-- Interface Acceleration -->
 <section>
   <h3><a>Acceleration</a> Interface</h3>
   <p>The <a>Acceleration</a> interface represents vehicle acceleration.
@@ -663,7 +698,7 @@
   </dl>
 </section>
 
-<!------------------------ Interface EngineCoolant ------------------------>
+<!-- Interface EngineCoolant -->
 <section>
   <h3><a>EngineCoolant</a> Interface</h3> <p>The <a>EngineCoolant</a>
 
@@ -678,7 +713,7 @@
   </dl>
 </section>
 
-<!------------------------ Interface SteeringWheel ------------------------>
+<!-- Interface SteeringWheel -->
 <section>
   <h3><a>SteeringWheel</a> Interface</h3> <p>The <a>SteeringWheel</a>
 
@@ -692,7 +727,7 @@
   </dl>
 </section>
 
-<!------------------------ Interface WheelTick ------------------------>
+<!-- Interface WheelTick -->
 <section>
   <h3><a>WheelTick</a> Interface</h3> <p>The <a>WheelTick</a>
 
@@ -708,7 +743,7 @@
   </dl>
 </section>
 
-<!------------------------ Interface IgnitionTime ------------------------>
+<!-- Interface IgnitionTime -->
 <section>
   <h3><a>IgnitionTime</a> Interface</h3> <p>The <a>IgnitionTime</a>
   represents status of ignition.</p>
@@ -722,19 +757,21 @@
   </dl>
 </section>
 
-<!------------------------ Interface YawRate ------------------------>
+<!-- Interface Gyro -->
 <section>
-  <h3><a>YawRate</a> Interface</h3> <p>The <a>YawRate</a>
-  represents vehicle yaw rate.</p>
-
-  <dl title="interface YawRate : VehicleCommonDataType"
-      class="idl">
-      <dt>readonly attribute short value</dt>
-      <dd>MUST return yaw rate of vehicle.  (Unit:  degrees per second)</dd>
+  <h3><a>Gyro</a> Interface</h3>
+  <p>The <a>Gyro</a> interface represents vehicle angular rates.
+  <dl title="interface Gyro : VehicleCommonDataType" class="idl">
+     <dt>readonly attribute short yawRate</dt>
+     <dd>MUST return yaw rate of vehicle.  (Unit:  degrees per second)</dd>
+     <dt>readonly attribute short pitchRate</dt>
+     <dd>MUST return pitch rate of vehicle.  (Unit:  degrees per second)</dd>
+     <dt>readonly attribute short rollRate</dt>
+     <dd>MUST return roll rate of vehicle. (Unit:  degrees per second)</dd>
   </dl>
 </section>
 
-<!------------------------ Interface BrakeOperation ------------------------>
+<!-- Interface BrakeOperation -->
 <section>
   <h3><a>BrakeOperation</a> Interface</h3> <p>The <a>BrakeOperation</a>
   represents vehicle brake operation.</p>
@@ -746,7 +783,7 @@
   </dl>
 </section>
 
-<!------------------------ Interface ButtonEvent ------------------------>
+<!-- Interface ButtonEvent -->
 <section>
   <h3><a>ButtonEvent</a> Interface</h3> <p>The <a>ButtonEvent</a>
   represents button press events from the steering wheel or other source</p>
@@ -805,24 +842,24 @@
   <dl title="interface ButtonEvent : VehicleCommonDataType"
   class="idl">
     <dt>readonly attribute VehicleButton[] button</dt>
-    <dd>MUST return the button events that occured.  This supports multiple simultanious button events.</dd>
+    <dd>MUST return the button events that occured.  This supports multiple simultaneous button events.</dd>
   </dl>
 </section>
 
-<!------------------------ Interface DrivingMode ------------------------------>
+<!-- Interface DrivingStatus -->
 <section>
-  <h3><a>DrivingMode</a> Interface</h3>
-  <p>The <a>DrivingMode</a> interface provides information about whether or not the vehicle is driving.  DrivingMode is an abstract data type that may
+  <h3><a>DrivingStatus</a> Interface</h3>
+  <p>The <a>DrivingStatus</a> interface provides information about whether or not the vehicle is driving.  DrivingStatus is an abstract data type that may
   combine several other data types such as vehicle speed, transmission gear, etc.  Typical usage would be to disable certain functions in the application
   if the vehicle is not safe to operate those functions to avoid driver distraction.</p>
-  <dl title="interface DrivingMode : VehicleCommonDataType" class="idl">
-    <dt>readonly attribute boolean mode</dt>
-    <dd>MUST return true if vehicle is in driving mode</dd>
+  <dl title="interface DrivingStatus : VehicleCommonDataType" class="idl">
+    <dt>readonly attribute boolean status</dt>
+    <dd>MUST return true if vehicle is in state of driving</dd>
   </dl>
 
 </section>
 
-<!------------------------ Interface NightMode ------------------------------>
+<!-- Interface NightMode -->
 <section>
   <h3><a>NightMode</a> Interface</h3>
   <p>The <a>NightMode</a> interface provides information about whether or not it is night time.  NightMode is an abstract data type that may
@@ -835,17 +872,30 @@
 
 </section>
 
-</section>
-<!------------------- End of Running Status Interfaces ---------------------->
-<!--------------------------------------------------------------------------->
+<!-- Interface StartStopMode -->
+<section>
+  <h3><a>StartStopMode</a> Interface</h3>
+  <p>The <a>StartStopMode</a> interface provides information about the status of start/stop feature of the vehicle, whereby the engine shuts off instead of idling while stationary.</p>
+  <dl title="interface StartStopMode : VehicleCommonDataType" class="idl">
+    <dt>readonly attribute boolean? startStopEnabled</dt>
+    <dd>MUST return true if start/stop is enabled</dd>
+    <dt>readonly attribute boolean? startStopActive</dt>
+    <dd>MUST return true if start/stop is currently active</dd>
+  </dl>
 
-<!--------------------------------------------------------------------------->
-<!---------------------- Maintenance Interfaces ----------------------------->
+</section>
+
+</section>
+<!-- End of Running Status Interfaces -->
+<!-->
+
+<!-->
+<!-- Maintenance Interfaces -->
 <section id="maintenance-interfaces">
       <h2>Maintenance Interfaces</h2>
 
       <p>Interfaces relating to vehicle maintenance, the act of inspecting or testing the condition of vehicle
-      subsystems (e.g., engine) and servicing or replacing parts and fluids.</p>
+      subsystems (e.g. engine) and servicing or replacing parts and fluids.</p>
 
       <dl title="partial interface Vehicle" class="idl">
         <!-- maintenance types: -->
@@ -870,7 +920,7 @@
       </dl>
 
 
-<!------------------------ Interface Odometer ------------------------------>
+<!-- Interface Odometer -->
 <section>
   <h3><a>Odometer</a> Interface</h3>
   <p>The <a>Odometer</a> interface provides information about the distance that the
@@ -883,25 +933,25 @@
   </dl>
 </section>
 
-<!------------------------ Interface Transmission Oil ------------------------------>
+<!-- Interface Transmission Oil -->
 <section>
   <h3><a>TransmissionOil</a> Interface</h3>
   <p>The <a>TransmissionOil</a> interface provides information about the state of a
-  vehicles transmission oil.
+  vehicle's transmission oil.
   <dl title="interface TransmissionOil : VehicleCommonDataType"
   class="idl">
      <dt>readonly attribute octet? wear</dt>
-     <dd>MUST return transmission oil wear (Unit: percentage, 0: no wear, 100: completely worn).</dd>
+     <dd>MUST return transmission oil wear (Unit: percentage, 0%: no wear, 100%: completely worn).</dd>
      <dt>readonly attribute byte? temperature</dt>
      <dd>MUST return current temperature of the transmission oil(Unit: celsius).</dd>
   </dl>
 </section>
 
-<!------------------------ Interface Transmission Clutch ------------------------------>
+<!-- Interface Transmission Clutch -->
 <section>
   <h3><a>TransmissionClutch</a> Interface</h3>
   <p>The <a>TransmissionClutch</a> interface provides information about the state of a
-  vehicles transmission clutch.
+  vehicle's transmission clutch.
   <dl title="interface TransmissionClutch : VehicleCommonDataType"
   class="idl">
      <dt>readonly attribute octet wear</dt>
@@ -909,11 +959,11 @@
   </dl>
 </section>
 
-<!------------------------ Interface BrakeMaintenance ------------------------------>
+<!-- Interface BrakeMaintenance -->
 <section>
   <h3><a>BrakeMaintenance</a> Interface</h3>
   <p>The <a>BrakeMaintenance</a> interface provides information about the maintenance state of a
-  vehicles brakes.
+  vehicle's brakes.
   <dl title="interface BrakeMaintenance : VehicleCommonDataType"
   class="idl">
      <dt>readonly attribute octet? fluidLevel</dt>
@@ -929,12 +979,12 @@
   </dl>
 </section>
 
-<!------------------------ Interface Washer Fluid ------------------------------>
+<!-- Interface Washer Fluid -->
 <section>
   <h3><a>WasherFluid</a> Interface</h3>
 
   <p>The <a>WasherFluid</a> interface provides information about the state of a
-  vehicles washer fluid.
+  vehicle's washer fluid.
   <dl title="interface WasherFluid : VehicleCommonDataType"
 
   class="idl">
@@ -945,12 +995,12 @@
   </dl>
 </section>
 
-<!------------------------ Interface Malfunction Indicator ------------------------------>
+<!-- Interface Malfunction Indicator -->
 <section>
   <h3><a>MalfunctionIndicator</a> Interface</h3>
 
   <p>The <a>MalfunctionIndicator</a> interface provides information about the state of a
-  vehicles Malfunction Indicator lamp.
+  vehicle's Malfunction Indicator lamp.
   <dl title="interface MalfunctionIndicator : VehicleCommonDataType"
 
   class="idl">
@@ -959,12 +1009,12 @@
   </dl>
 </section>
 
-<!------------------------ Interface Battery Status ------------------------------>
+<!-- Interface Battery Status -->
 <section>
   <h3><a>BatteryStatus</a> Interface</h3>
 
   <p>The <a>BatteryStatus</a> interface provides information about the state of a
-  vehicles battery.
+  vehicle's battery.
   <dl title="interface BatteryStatus : VehicleCommonDataType"
 
   class="idl">
@@ -979,12 +1029,12 @@
   </dl>
 </section>
 
-<!------------------------ Interface Tire ------------------------------>
+<!-- Interface Tire -->
 <section>
   <h3><a>Tire</a> Interface</h3>
 
   <p>The <a>Tire</a> interface provides information about the state of a
-  vehicles tires.
+  vehicle's tires.
   <dl title="interface Tire : VehicleCommonDataType"
 
   class="idl">
@@ -999,7 +1049,35 @@
   </dl>
 </section>
 
-<!------------------------ Interface  Diagnostic ------------------------>
+
+<!-- Interface  TroubleCode -->
+<section>
+
+    <h3><a>TroubleCode</a> Interface</h3> <p>The <a>TroubleCode</a> interface
+    represents interface to trouble codes produced by vehicle.</p>
+
+  <dl title="enum TroubleCodeType"
+  class="idl">
+    <dt>current</dt>
+    <dd></dd>
+    <dt>pending</dt>
+    <dd></dd>
+    <dt>history</dt>
+    <dd></dd>
+  </dl>
+
+    <dl title="interface TroubleCode : VehicleCommonDataType"
+        class="idl">
+        <dt>readonly attribute TroubleCodeType[] type</dt>
+        <dd>MUST return type of trouble code</dd>
+        
+        <dt>readonly attribute DOMString[] TroubleCodeValue</dt>
+        <dd>MUST return alphanumeric value of trouble code</dd>
+    </dl>
+</section>
+
+
+<!-- Interface  Diagnostic -->
 <section>
 
     <h3><a>Diagnostic</a> Interface</h3> <p>The <a>Diagnostic</a> interface
@@ -1018,15 +1096,17 @@
         <dd>MUST return time elapsed with the malfunction indicator light on (Unit: seconds)</dd>
         <dt>readonly attribute unsigned long timeTroubleCodeClear</dt>
         <dd>MUST return time elapsed since the trouble codes were last cleared (Unit: seconds)</dd>
+        
+        </dd>
     </dl>
 </section>
 
 </section>
-<!------------------- End of Maintenance Interfaces ----------------------->
-<!------------------------------------------------------------------------->
+<!-- End of Maintenance Interfaces -->
+<!-->
 
-<!------------------------------------------------------------------------->
-<!---------------------- Personalization  Interfaces ---------------------->
+<!-->
+<!-- Personalization  Interfaces -->
 
 <section id="personalization-interfaces">
       <h2>Personalization Interfaces</h2>
@@ -1052,7 +1132,7 @@
       </dl>
 
 
-<!------------------------ Interface Language ------------------------------>
+<!-- Interface Language -->
 <section>
   <h3><a>LanguageConfiguration</a> Interface</h3>
   <p>The <a>LanguageConfiguration</a> interface provides language information about a
@@ -1063,7 +1143,7 @@
   </dl>
 </section>
 
-<!------------------------ Interface Units Of Measure ------------------------------>
+<!-- Interface Units Of Measure -->
 <section>
   <h3><a>UnitsOfMeasure</a> Interface</h3>
   <p>The <a>UnitsOfMeasure</a> interface provides information about the measurement
@@ -1086,25 +1166,25 @@
   </dl>
 </section>
 
-<!------------------------ Interface Mirror ------------------------------>
+<!-- Interface Mirror -->
 <section>
   <h3><a>Mirror</a> Interface</h3>
   <p>The <a>Mirror</a> interface provides or sets information about mirrors
   in vehicle.
   <dl title="interface Mirror : VehicleCommonDataType" class="idl">
-     <dt>attribute octet? mirrorTilt</dt>
+     <dt>attribute byte? mirrorTilt</dt>
      <dd>MUST return mirror tilt position in percentage distance travelled, from downward-facing to
      upward-facing position (Unit: percentage, 0%:center position, -100%:fully downward, 100%:full upward)</dd>
-     <dt>attribute octet? mirrorPan</dt>
+     <dt>attribute byte? mirrorPan</dt>
      <dd>MUST return mirror pan position in percentage distance travelled, from left to right
-     position (Unit: percentage, %0:center position, -100%:fully left, 100%:fully right)</dd>
+     position (Unit: percentage, 0%:center position, -100%:fully left, 100%:fully right)</dd>
     <dt>readonly attribute Zone? zone</dt>
     <dd>MUST return Zone for requested attribute</dd>
 
   </dl>
 </section>
 
-<!--------------------- Interface SeatAdjustment -------------------------->
+<!-- Interface SeatAdjustment -->
 <section>
   <h3><a>SeatAdjustment</a> Interface</h3>
   <p>The <a>SeatAdjustment</a> interface provides or sets information about seats
@@ -1138,7 +1218,7 @@
   </dl>
 </section>
 
-<!------------------------ Interface Drive Mode ------------------------------>
+<!-- Interface Drive Mode -->
 <section>
   <h3><a>DriveMode</a> Interface</h3>
   <p>The <a>DriveMode</a> interface provides or sets information about a vehicles
@@ -1165,7 +1245,7 @@
   </dl>
 </section>
 
-<!------------------------ Interface Dashboard Illumination ------------------------------>
+<!-- Interface Dashboard Illumination -->
 <section>
   <h3><a>DashboardIllumination</a> Interface</h3>
   <p>The <a>DashboardIllumination</a> interface provides or sets information about dashboard
@@ -1180,7 +1260,7 @@
   </dl>
 </section>
 
-<!------------------------ Interface Vehicle Sound ------------------------------>
+<!-- Interface Vehicle Sound -->
 <section>
   <h3><a>VehicleSound</a> Interface</h3>
   <p>The <a>VehicleSound</a> interface provides or sets information about vehicle sound.
@@ -1199,15 +1279,18 @@
 </section>
 
 </section>
-<!------------------- End of Personalization Interfaces ------------------->
-<!------------------------------------------------------------------------->
+<!-- End of Personalization Interfaces -->
+<!-->
 
-<!------------------------------------------------------------------------->
-<!------------------------ DrivingSafety Interfaces ----------------------->
+<!-->
+<!-- DrivingSafety Interfaces -->
 
 <section id="drivingsafety-interfaces">
       <h2>DrivingSafety Interfaces</h2>
       <p>Interfaces related to driving safety such as anti-lock braking and airbag status.</p>
+      
+      <p class="ednote">Integers have been used in favor of floating point values in order to preserve 
+      precision during calculations (e.g. meters per hour instead of kilometers per hour).</p>
 
       <dl title="partial interface Vehicle" class="idl">
         <dt>readonly attribute VehicleSignalInterface antilockBrakingSystem</dt>
@@ -1228,7 +1311,7 @@
         <dd>MUST return VehicleSignalInterface for accessing <a>Seat</a></dd>
       </dl>
 
-<!------------------- AntilockBrakingSystem Interface  -------------------->
+<!-- AntilockBrakingSystem Interface  -->
 <section>
   <h3><a>AntilockBrakingSystem</a> Interface</h3> <p>The <a>AntilockBrakingSystem</a> interface
   provides status of ABS(Antilock Braking System) status and setting.</p>
@@ -1242,7 +1325,7 @@
   </dl>
 </section>
 
-<!------------------- TractionControlSystem Interface  -------------------->
+<!-- TractionControlSystem Interface  -->
 <section>
   <h3><a>TractionControlSystem</a> Interface</h3> <p>The <a>TractionControlSystem</a> interface
   provides status of TCS(Traction Control System) status and setting.</p>
@@ -1256,7 +1339,7 @@
   </dl>
 </section>
 
-<!------------------- ElectronicStabilityControl Interface  -------------------->
+<!-- ElectronicStabilityControl Interface  -->
 <section>
   <h3><a>ElectronicStabilityControl</a> Interface</h3> <p>The <a>ElectronicStabilityControl</a> interface
   provides status of ESC(Electronic Stability Control) status and setting.</p>
@@ -1270,7 +1353,7 @@
   </dl>
 </section>
 
-<!---------------------------- TopSpeedLimit Interface  ------------------------>
+<!-- TopSpeedLimit Interface  -->
 <section>
   <h3><a>TopSpeedLimit</a> Interface</h3> <p>The <a>TopSpeedLimit</a> interface
   provides the current setting of top speed limit of the vehicle.</p>
@@ -1278,11 +1361,11 @@
   <dl title="interface TopSpeedLimit : VehicleCommonDataType"
   class="idl">
     <dt>readonly attribute unsigned short speed</dt>
-    <dd>MUST return vehicle top speed limit (Unit:  kilometers per hour)</dd>
+    <dd>MUST return vehicle top speed limit (Unit: meters per hour)</dd>
   </dl>
 </section>
 
-<!---------------------------- AirbagStatus Interface  ------------------------>
+<!-- AirbagStatus Interface  -->
 <section>
   <h3><a>AirbagStatus</a> Interface</h3> <p>The <a>AirbagStatus</a> interface
   provides the current status of airbags in each zones of the vehicle.</p>
@@ -1298,7 +1381,7 @@
   </dl>
 </section>
 
-<!---------------------------- Door Interface  ------------------------>
+<!-- Door Interface  -->
 <section>
   <h3><a>Door</a> Interface</h3> <p>The <a>Door</a> interface
   provides the current status of doors in each zones of the vehicle.</p>
@@ -1324,7 +1407,7 @@
 
 </section>
 
-<!--------------------- ChildSafetyLock Interface  --------------------->
+<!-- ChildSafetyLock Interface  -->
 <section>
   <h3><a>ChildSafetyLock</a> Interface</h3> <p>The <a>ChildSafetyLock</a> interface
   provides the current setting of Child Safety Lock.</p>
@@ -1338,7 +1421,7 @@
   </dl>
 </section>
 
-<!---------------------------- Seat Interface  ------------------------>
+<!-- Seat Interface  -->
 <section>
   <h3><a>Seat</a> Interface</h3> <p>The <a>Seat</a> interface
   provides the current occupant information and seatbelt status of a seat in different zones of the vehicle.</p>
@@ -1388,12 +1471,12 @@
 
 
 </section>
-<!------------------------------------------------------------------------->
-<!-------------------- End of DrivingSafety Interfaces -------------------->
+<!-->
+<!-- End of DrivingSafety Interfaces -->
 
-<!------------------------------------------------------------------------->
-<!---------------------- Climate Interfaces ------------------------------->
-<section id="Climate-interfaces">
+<!-->
+<!-- Climate Interfaces -->
+<section id="climate-interfaces">
       <h2>Climate Interfaces</h2>
       <p>Interfaces related to vehicle climate (interior and exterior) such as temperature and rain.</p>
 
@@ -1419,7 +1502,7 @@
         <dd>MUST return VehicleSignalInterface for accessing <a>AtmosphericPressure</a></dd>
       </dl>
 
-<!------------------------ Interface Temperature ------------------------------>
+<!-- Interface Temperature -->
 <section>
   <h3><a>Temperature</a> Interface</h3>
   <p>The <a>Temperature</a> interface provides information about the current temperature of outside or inside vehicle.
@@ -1431,7 +1514,7 @@
   </dl>
 </section>
 
-<!------------------------ Interface RainSensor ------------------------------>
+<!-- Interface RainSensor -->
 <section>
   <h3><a>RainSensor</a> Interface</h3>
   <p>The <a>RainSensor</a> interface provides information about ambient light levels.
@@ -1443,7 +1526,7 @@
   </dl>
 </section>
 
-<!------------------------ Interface WiperStatus ------------------------------>
+<!-- Interface WiperStatus -->
 <section>
   <h3><a>WiperStatus</a> Interface</h3>
   <p>The <a>WiperStatus</a> interface represents the status of wiper operation.
@@ -1477,7 +1560,7 @@
   </dl>
 </section>
 
-<!------------------------ Interface Defrost ------------------------------>
+<!-- Interface Defrost -->
 <section>
   <h3><a>Defrost</a> Interface</h3>
   <p>The <a>Defrost</a> interface represents the status of wiper operation.
@@ -1491,7 +1574,7 @@
   </dl>
 </section>
 
-<!------------------------ Interface Sunroof ------------------------------>
+<!-- Interface Sunroof -->
 <section>
   <h3><a>Sunroof</a> Interface</h3>
   <p>The <a>Sunroof</a> interface represents the current status of Sunroof.
@@ -1506,7 +1589,7 @@
   <p>Both can be used to send user's request for changing setting.</p>
 </section>
 
-<!------------------------ Interface ConvertibleRoof ------------------------------>
+<!-- Interface ConvertibleRoof -->
 <section>
   <h3><a>ConvertibleRoof</a> Interface</h3>
   <p>The <a>ConvertibleRoof</a> interface represents the current status of Convertible Roof.
@@ -1532,7 +1615,7 @@
   <p>This attribute can be used to send user's request for changing setting. "closed" is used to close and "opened" is used to open.</p>
 </section>
 
-<!------------------------ Interface SideWindow ------------------------------>
+<!-- Interface SideWindow -->
 <section>
   <h3><a>SideWindow</a> Interface</h3>
   <p>The <a>SideWindow</a> interface represents the current status of openness of side windows.
@@ -1547,7 +1630,7 @@
   </dl>
 </section>
 
-<!------------------------ Interface ClimateControl ------------------------------>
+<!-- Interface ClimateControl -->
 <section>
   <h3><a>ClimateControl</a> Interface</h3>
   <p>The <a>ClimateControl</a> interface represents the current setting of the climate control equipments such as heater and air conditioner.
@@ -1589,7 +1672,7 @@
   <p><a>ClimateControl</a> can be used to send user's request for changing setting.</p>
 </section>
 
-<!------------------------ Interface AtmosphericPressure ------------------------------>
+<!-- Interface AtmosphericPressure -->
 <section>
   <h3><a>AtmosphericPressure</a> Interface</h3>
   <p>The <a>AtmosphericPressure</a> interface provides information about the current atmospheric pressure outside of the vehicle.
@@ -1600,10 +1683,10 @@
 </section>
 
 </section>
-<!--------------------- End of Climate Interfaces -------------------------->
+<!-- End of Climate Interfaces -->
 
-<!--------------------------------------------------------------------------->
-<!---------------------- Vision and Parking Interfaces ----------------------------->
+<!-->
+<!-- Vision and Parking Interfaces -->
 <section id="vision-parking-interfaces">
       <h2>Vision and Parking Interfaces</h2>
 
@@ -1621,7 +1704,7 @@
         <dd>MUST return VehicleSignalInterface for accessing <a>ParkingLights</a></dd>
       </dl>
 
-<!------------------------ Interface LaneDepartureDetection (Vision) ------------------------------>
+<!-- Interface LaneDepartureDetection (Vision) -->
 <section>
   <h3><a>LaneDepartureDetection</a> Interface</h3>
   <p>The <a>LaneDepartureDetection</a> interface represents the current status of the lane departure warning function.
@@ -1641,7 +1724,7 @@
   </dl>
  </section>
 
-<!------------------------ Interface Alarm ------------------------------>
+<!-- Interface Alarm -->
 <section>
   <h3><a>Alarm</a> Interface</h3>
   <p>The <a>Alarm</a> interface represents the current status of the vehicle alarm system.
@@ -1665,7 +1748,7 @@
   </dl>
  </section>
 
- <!------------------------ Interface ParkingBrake (Parking)------------------------------>
+ <!-- Interface ParkingBrake (Parking)-->
 <section>
   <h3><a>ParkingBrake</a> Interface</h3>
   <p>The <a>ParkingBrake</a> interface represents the current status of the parking brake.
@@ -1687,10 +1770,10 @@
 
 </section>
 
-<!-------------------------- End of Vision and Parking interfaces -------------------------------------->
+<!-- End of Vision and Parking interfaces -->
 
 
-<!----------------------------- Use Cases ---------------------------------->
+<!-- Use Cases -->
 <section class="use-cases">
   <h2>Use-Cases</h2>
     <section>
@@ -1738,8 +1821,10 @@
             </section>
             <section>
                 <h4>Use Cases for DrivingSafety</h4>
-                <ul>
-                    Driver able to see safety setting and warnings at a glance.
+		<ul>
+		  <li>
+		    Driver able to see safety setting and warnings at a glance.
+		  </li> 
                 </ul>
             </section>
             <section>
@@ -1800,12 +1885,12 @@
             </section>
     </section>
 </section>
-<!------------------------- End of Use Cases ------------------------------->
+<!-- End of Use Cases -->
 
   </body>
 </html>
 
-<!------------------------ Interface  -----------------------
+<!-- Interface  -----------------------
 <section>
   <h3><a></a> Interface</h3> <p>The <a></a>
   represents</p>
