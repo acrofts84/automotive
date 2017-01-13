@@ -12,23 +12,23 @@
           editors:  [{
             name: "Kevin Gavigan", company: "Jaguar Land Rover",
             url: "mailto:kgavigan@jaguarlandrover.com",
-	    companyURL: "http://www.jaguarlandrover.com/",
-	    w3cid: 71411
+      companyURL: "http://www.jaguarlandrover.com/",
+      w3cid: 71411
           }, {
             name: "Adam Crofts", company: "Jaguar Land Rover",
             url: "mailto:acrofts1@jaguarlandrover.com",
-	    companyURL: "http://www.jaguarlandrover.com/",
-	    w3cid: 74857
+      companyURL: "http://www.jaguarlandrover.com/",
+      w3cid: 74857
           }, {
             name: "이원석(Wonsuk Lee)", company: "한국전자통신연구원(ETRI)",
             url: "mailto:wonsuk.lee@etri.re.kr",
-	    companyURL: "https://www.etri.re.kr/",
-	    w3cid: 34457
+      companyURL: "https://www.etri.re.kr/",
+      w3cid: 34457
           }, {
             name: "Powell Kinney", company: "Vinli",
             url: "mailto:powell@vin.li",
-	    companyURL: "https://www.vin.li/",
-	    w3cid: 83094
+      companyURL: "https://www.vin.li/",
+      w3cid: 83094
           }],
           edDraftURI:           "https://w3c.github.io/automotive/vehicle_data/vehicle_information_service.html",
           wg:           "Automotive Working Group",
@@ -55,7 +55,7 @@
           wgURI:        "https://www.w3.org/auto/wg/",
           wgPublicList: "public-automotive",
           wgPatentURI: "https://www.w3.org/2004/01/pp-impl/76043/status",
-	  };
+    };
     </script>
     <style>
         table.parameters, table.exceptions {
@@ -105,9 +105,9 @@
   <body>
     <!-- Abstract -->
     <section id="abstract">
-	<p>This specification defines a WebSocket based API for a vehicle information service that provides the functionality for client applications to get, set, subscribe and unsubscribe to vehicle signals and data attributes.</p>
-	<p>The purpose of the specification is to promote a Server API that enables application development in a consistent manner across participating automotive manufacturers.</p>
-	  </section>
+  <p>This specification defines a WebSocket based API for a vehicle information service that provides the functionality for client applications to get, set, subscribe and unsubscribe to vehicle signals and data attributes.</p>
+  <p>The purpose of the specification is to promote a Server API that enables application development in a consistent manner across participating automotive manufacturers.</p>
+    </section>
 
     <!-- Status of this document -->
     <section id="sotd">
@@ -122,19 +122,19 @@
       notifications and to UNSUBSCRIBE from receiving notifications.</p>
 
       <p>The API that is used to manage access to vehicle signals and static data is defined in this Vehicle Information Service 
-	 Specification (VISS). The VISS also describes a discovery mechanism that defines the set of signals and data that a client can access at a 
+   Specification (VISS). The VISS also describes a discovery mechanism that defines the set of signals and data that a client can access at a 
          particular point in time.</p>
-	    
-      <p>The term 'signal' is used here to represent an item of	data that can vary over time, for example vehicle speed,
-	 whilst the expression 'static data' is used to denote a temporally invariant property like vehicle width.</p>
+      
+      <p>The term 'signal' is used here to represent an item of data that can vary over time, for example vehicle speed,
+   whilst the expression 'static data' is used to denote a temporally invariant property like vehicle width.</p>
 
       <p>The GENIVI Vehicle Signal Specification (VSS) defines the set of vehicle signals and data that are exposed via this Vehicle 
         Information Service Specification (VISS). The Vehicle Signal Specification (VSS) supports both extensibility and the ability 
-	to define private branches.</p>
+  to define private branches.</p>
 
       <p>In addition, the 'tree' of signals that is accessible at any point in time may also vary depending on standard access control principles.
          That is, it can vary based on the identity of the user (person or organisation) requesting the data and/or the application or 
-	 device (e.g. vehicle) where the request originates.</p>
+   device (e.g. vehicle) where the request originates.</p>
 
       <p>To support this, the Service Specification describes an extensible token based security mechanism that can optionally be used to pass tokens to the WebSocket Server,
         for example to represent the user of an application and/or the device that the client application is running on.</p>
@@ -172,76 +172,76 @@
       'standards-compliant' JavaScript libraries that can be used by web based clients.</p>
       <p>The Vehice Information Service API MAY be invoked directly, the following example illustrates how a client could invoke the VISS API.
       This simplified example is for illustrative purposes only, it does not show error handling and is not
-	intended to be commercial code.</p>
+  intended to be commercial code.</p>
 
-	<pre class="example highlight">
-		// open WebSocket
-		var vehicle  = new WebSocket("wss://wwwivi", "wvss1.0");
+  <pre class="example highlight">
+    // open WebSocket
+    var vehicle  = new WebSocket("wss://wwwivi", "wvss1.0");
 
-		// establish authorization
-		vehicle.onopen = function () {
-			vehicle.send('{"action": "authorize",
-				"tokens": {"authorization": "&lt;user_token_value&gt;"},
-				"requestId": "103"}');
-		};
+    // establish authorization
+    vehicle.onopen = function () {
+      vehicle.send('{"action": "authorize",
+        "tokens": {"authorization": "&lt;user_token_value&gt;"},
+        "requestId": "103"}');
+    };
 
-		// request a signal
-		if (vehicle.readyState === OPEN) {
-			vehicle.send('{"action": "get", "path": "Signal.Drivetrain.Transmission.Speed"}');
+    // request a signal
+    if (vehicle.readyState === OPEN) {
+      vehicle.send('{"action": "get", "path": "Signal.Drivetrain.Transmission.Speed"}');
 
-			// process messages from the server
-			vehicle.onmessage = function(event){
-				var msg = JSON.parse(event.data);
-				if(msg.path == "Signal.Drivetrain.Transmission.Speed" && msg.value){
-					console.log("The current speed is " + msg.value);
-				}
-			};
-		}
+      // process messages from the server
+      vehicle.onmessage = function(event){
+        var msg = JSON.parse(event.data);
+        if(msg.path == "Signal.Drivetrain.Transmission.Speed" && msg.value){
+          console.log("The current speed is " + msg.value);
+        }
+      };
+    }
 
-		// close the WebSocket
-		vehicle.close();
-	</pre>
-	<p>The following example shows a JavaScript client subscription request and response.</p>
-	<pre class="example highlight">
-		// set a subscription, assuming the same authorization and set up from Example 1
-		if (vehicle.readyState === OPEN) {
-			vehicle.send('{"action": "subscribe", "path": "Signal.Drivetrain.InternalCombustionEngine.RPM",
-					"requestId": "104"}');
-			vehicle.onmessage = function(event){
-				var msg = JSON.parse(event.data);
-				if(msg.hasOwnProperty("requestId") && msg.requestId == "104"){
-					console.log("Latest RPM is " + msg.value);
-				}
-			};
-		}
-	</pre>
+    // close the WebSocket
+    vehicle.close();
+  </pre>
+  <p>The following example shows a JavaScript client subscription request and response.</p>
+  <pre class="example highlight">
+    // set a subscription, assuming the same authorization and set up from Example 1
+    if (vehicle.readyState === OPEN) {
+      vehicle.send('{"action": "subscribe", "path": "Signal.Drivetrain.InternalCombustionEngine.RPM",
+          "requestId": "104"}');
+      vehicle.onmessage = function(event){
+        var msg = JSON.parse(event.data);
+        if(msg.hasOwnProperty("requestId") && msg.requestId == "104"){
+          console.log("Latest RPM is " + msg.value);
+        }
+      };
+    }
+  </pre>
         <p>The target platform supported by the specification is exclusively passenger vehicles. Use of this
-	specification for non-passenger applications (for example heavy machinery, marine and airline infotainment) is
-	not prohibited, but is not covered in the design or content of the API.</p>
+  specification for non-passenger applications (for example heavy machinery, marine and airline infotainment) is
+  not prohibited, but is not covered in the design or content of the API.</p>
 
-	<p>An example use case could be the implementation of a 'Home Mechanic' application that provides warnings if any
-	the following need attention: tire pressure, engine oil level, washer fluid level and battery charge level.</p>
+  <p>An example use case could be the implementation of a 'Home Mechanic' application that provides warnings if any
+  the following need attention: tire pressure, engine oil level, washer fluid level and battery charge level.</p>
 
-	<p>Exposing vehicle signals in a standardized manner facilitates the integration of vehicles within the Web of Things (WoT)
-	and supports future use case innovations in a variety of fields including transportation, safety, navigation, energy management,
-	smart transportation and consumer infotainment.</p>
-	    
-	<p>The data format used for client/server communication within this specification is JSON encoded strings, however other data formats may be supported in future versions of the specification.</p>
+  <p>Exposing vehicle signals in a standardized manner facilitates the integration of vehicles within the Web of Things (WoT)
+  and supports future use case innovations in a variety of fields including transportation, safety, navigation, energy management,
+  smart transportation and consumer infotainment.</p>
+      
+  <p>The data format used for client/server communication within this specification is JSON encoded strings, however other data formats may be supported in future versions of the specification.</p>
       </section>
 
       <!-- Conformance -->
       <section id="conformance">
-	<p>This specification defines conformance criteria that apply to a single product: specifically the 'in-vehicle'
-	WebSocket <dfn>Vehicle Information Service</dfn> that implements the interfaces, semantics and behaviour
-	defined in this document. For simplicity, this usually is referred to as the 'WebSocket Server' or just 'the server'</p>
+  <p>This specification defines conformance criteria that apply to a single product: specifically the 'in-vehicle'
+  WebSocket <dfn>Vehicle Information Service</dfn> that implements the interfaces, semantics and behaviour
+  defined in this document. For simplicity, this usually is referred to as the 'WebSocket Server' or just 'the server'</p>
       </section>
 
       <!-- Terminology -->
       <section id="terminology">
-	<h2>Terminology</h2>
- 	<p>The term 'WebSocket' when used in this document, is as defined in the W3C WebSocket API
- 	(see <a href="https://www.w3.org/TR/2011/WD-websockets-20110929">here</a>) and the WebSocket Protocol
- 	(see <a href="https://tools.ietf.org/html/rfc6455">RFC6455</a>).</p>
+  <h2>Terminology</h2>
+  <p>The term 'WebSocket' when used in this document, is as defined in the W3C WebSocket API
+  (see <a href="https://www.w3.org/TR/2011/WD-websockets-20110929">here</a>) and the WebSocket Protocol
+  (see <a href="https://tools.ietf.org/html/rfc6455">RFC6455</a>).</p>
       </section>
 
       <!-- Table of Figures -->
@@ -354,36 +354,36 @@
         <h2>Security and Privacy Considerations</h2>
         <h3>Introduction</h3>
         <p>The server implementation MAY optionally restrict access to one or more vehicle signals so that they can only
-	be accessed in response to a request from an authorized user and/or device. This could be for a variety of
-	reasons, including safety, privacy or commercial considerations.</p>
+  be accessed in response to a request from an authorized user and/or device. This could be for a variety of
+  reasons, including safety, privacy or commercial considerations.</p>
 
-	<p>Hence, a request to GET, SET, SUBSCRIBE or UNSUBSCRIBE to data may require the client to demonstrate
-	to the server that the request is from one or more suitably authorized Security Principals.</p>
+  <p>Hence, a request to GET, SET, SUBSCRIBE or UNSUBSCRIBE to data may require the client to demonstrate
+  to the server that the request is from one or more suitably authorized Security Principals.</p>
 
         <p>The different types of Security Principal, the approach taken to control access to signals and the importance of data privacy are described in the sections that follow.</p>
 
         <h3>Security Principals</h3>
-	<p>The types of security principal include:</p>
+  <p>The types of security principal include:</p>
 
         <table class="parameters">
-	  <tr>
-	    <th>Type</th>
-	    <th>Description</th>
-	  </tr>
-	  <tr>
-	    <td>User</td>
-	    <td>A person, system or organisation responsible for making the request e.g. driver, Emergency Services,
-	        Smart City Traffic Management System.</td>
-	  </tr>
-	  <tr>
-	    <td>Device</td>
-	    <td>Vehicle or device where the request originates. Could for example be a user's Consumer Electronics
-		(CE) device connected to the vehicle's WiFi hotspot or another vehicle in a convoy;  an Electronic Control
-		Unit (ECU) on the same vehicle or any internet connected system e.g. a Web of Things (WoT) device.</td>
-	  </tr>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <td>User</td>
+      <td>A person, system or organisation responsible for making the request e.g. driver, Emergency Services,
+          Smart City Traffic Management System.</td>
+    </tr>
+    <tr>
+      <td>Device</td>
+      <td>Vehicle or device where the request originates. Could for example be a user's Consumer Electronics
+    (CE) device connected to the vehicle's WiFi hotspot or another vehicle in a convoy;  an Electronic Control
+    Unit (ECU) on the same vehicle or any internet connected system e.g. a Web of Things (WoT) device.</td>
+    </tr>
         </table>
 
-	<h3>Access Control and Authorization</h3>
+  <h3>Access Control and Authorization</h3>
         <p>When a client makes a request to access signal data it is performing the request on behalf of one or more
         Security Principals, that is, for a particular user and/or vehicle/device.</p>
 
@@ -413,7 +413,7 @@
           <figcaption>Diagram showing conceptual WebSocket Security Token flow (data structures are illustrative only)</figcaption>
         </figure>
 
-	      <p class="note">TODO: Update diagram to reflect auth token structure and review including other diagrams from Wiki</p>
+        <p class="note">TODO: Update diagram to reflect auth token structure and review including other diagrams from Wiki</p>
         <p>After receiving a message with an 'authorize' action the server attempts to verify the tokens e.g. by checking
         with the issuing Security Authority. If all of the tokens that are passed to the server are valid, it returns
         a success response and all subsequent requests received by the WebSocket instance have elevated access control
@@ -461,51 +461,51 @@
 
       <!-- Initialisation of the Web Socket -->
       <section>
-	<h3>Initialisation of the Web Socket</h3>
+  <h3>Initialisation of the Web Socket</h3>
 
-	<p>If the client application is an HTML Application running in a web
-	runtime or is a web page running in a browser, the WebSocket
-	instance may either be instantiated natively or be created using a
-	'standards compliant' WebSocket JavaScript library.</p>
-	<p>A WebSocket can also be initiated from a native (e.g. C++) Application
-	or from an Application written using a 'Managed Runtime' language like
-	Java or C#. It is assumed that native and managed clients use a
-	suitable standards compliant WebSocket library to request that a
-	WebSocket connection is opened on the server.</p>
+  <p>If the client application is an HTML Application running in a web
+  runtime or is a web page running in a browser, the WebSocket
+  instance may either be instantiated natively or be created using a
+  'standards compliant' WebSocket JavaScript library.</p>
+  <p>A WebSocket can also be initiated from a native (e.g. C++) Application
+  or from an Application written using a 'Managed Runtime' language like
+  Java or C#. It is assumed that native and managed clients use a
+  suitable standards compliant WebSocket library to request that a
+  WebSocket connection is opened on the server.</p>
 
-	<p>A client running on the vehicle is able to connect to the
-	WebSocket Server instance using the hostname 'wwwivi' and uses the
-	default port 443. The hostname 'wwwivi' may locally be mapped to the localhost
-	IP address 127.0.0.1 e.g. by adding an entry to the /etc/hosts file.</p>
+  <p>A client running on the vehicle is able to connect to the
+  WebSocket Server instance using the hostname 'wwwivi' and uses the
+  default port 443. The hostname 'wwwivi' may locally be mapped to the localhost
+  IP address 127.0.0.1 e.g. by adding an entry to the /etc/hosts file.</p>
 
-	<p>The sub-protocol name SHALL be 'wvss' with a version number suffix, e.g. wvss1.0</p>
-	<pre class="highlight hljs javascript">
-	  <span class="hljs-keyword">var</span> vehicle  = new WebSocket("wss://wwwivi", "wvss1.0");
-	</pre>
-	
-	<p class="note">Discuss merits of using 'wwwivi' as a standardised hostname. Do we want a more generic 
-		hostname, not just for IVI but also encompassing WoT standards?</p>
-	      
-	<p>RESTful web services are out of scope for the first revision of
-	this specification, but could be considered for addition in a later
-	version.</p>
+  <p>The sub-protocol name SHALL be 'wvss' with a version number suffix, e.g. wvss1.0</p>
+  <pre class="highlight hljs javascript">
+    <span class="hljs-keyword">var</span> vehicle  = new WebSocket("wss://wwwivi", "wvss1.0");
+  </pre>
+  
+  <p class="note">Discuss merits of using 'wwwivi' as a standardised hostname. Do we want a more generic 
+    hostname, not just for IVI but also encompassing WoT standards?</p>
+        
+  <p>RESTful web services are out of scope for the first revision of
+  this specification, but could be considered for addition in a later
+  version.</p>
 
-	<p>To support ‘defence in depth’ and a layered security approach,
-	connections between clients and servers are strongly
-	encrypted. This is to make it more difficult for an attacker that
-	has succeeded in installing malicious code on a vehicle to
-	eavesdrop, hijack security tokens or impersonate valid security
-	principals in order to get and set sensitive vehicle signals.</p>
+  <p>To support ‘defence in depth’ and a layered security approach,
+  connections between clients and servers are strongly
+  encrypted. This is to make it more difficult for an attacker that
+  has succeeded in installing malicious code on a vehicle to
+  eavesdrop, hijack security tokens or impersonate valid security
+  principals in order to get and set sensitive vehicle signals.</p>
 
-	<p>The client SHALL connect to the server over HTTPS and request that
-	the server opens a WebSocket. All WebSocket communications between
-	the client and server MUST be over ‘wss’. Non encrypted communication
-	is not supported, hence the server MUST refuse ‘ws’ connection requests.</p>
+  <p>The client SHALL connect to the server over HTTPS and request that
+  the server opens a WebSocket. All WebSocket communications between
+  the client and server MUST be over ‘wss’. Non encrypted communication
+  is not supported, hence the server MUST refuse ‘ws’ connection requests.</p>
 
-	<p>For security reasons, clients are not able to connect
-	directly to ECUs or to CAN, MOST or LIN networks. All access is
-	via WebSocket. This allows the server to securely control access to
-	vehicle signals.</p>
+  <p>For security reasons, clients are not able to connect
+  directly to ECUs or to CAN, MOST or LIN networks. All access is
+  via WebSocket. This allows the server to securely control access to
+  vehicle signals.</p>
       </section>
 
       <!-- Message Structure -->
@@ -516,165 +516,260 @@
        <a href="https://www.w3.org/TR/2011/WD-websockets-20110929/#the-websocket-interface">here</a>,
         to pass request messages to the server. The message signature SHALL be:</p>
 
-	<pre class="highlight hljs javascript">
-		WebSocket.send(request)
-	</pre>
-	<p>The request message MUST be comprised of one the request objects defined in this section. The client SHALL
-	receive responses from the server using the WebSocket <dfn>onmessage</dfn> method, as follows:</p>
-	<pre class="highlight hljs javascript">
-		WebSocket.onmessage = function(obj){
-			// process data
-		}
-	</pre>
-	<p>The message returned by the server MUST be one of the response objects defined in the table below.</p>
+  <pre class="highlight hljs javascript">
+    WebSocket.send(request)
+  </pre>
+  <p>The request message MUST be comprised of one the request objects defined in this section. The client SHALL
+  receive responses from the server using the WebSocket <dfn>onmessage</dfn> method, as follows:</p>
+  <pre class="highlight hljs javascript">
+    WebSocket.onmessage = function(obj){
+      // process data
+    }
+  </pre>
+  <p>The message returned by the server MUST be one of the response objects defined in the table below.</p>
 
-	<table class="parameters">
-	  <tr>
-	    <th>Request Objects</th>
-	    <th>Response Objects</th>
-	  </tr>
-	  <tr>
-	    <td><a>authorizeRequest</a></td>
-	    <td>
-	    	<a>authorizeSuccessResponse</a><br>
-			<a>authorizeErrorResponse</a>
-		</td>
-	  </tr>
-	  <tr>
-	    <td><a>vssRequest</a></td>
-	    <td>
-		<a>vssSuccessResponse</a><br>
-	        <a>vssErrorResponse</a>
-	    </td>
-	  </tr>		
-	  <tr>
-	    <td><a>getRequest</a></td>
-	    <td>
-	    	<a>getSuccessResponse</a><br>
-			<a>getErrorResponse</a>
-		</td>
-	  </tr>
-	  <tr>
-	    <td><a>setRequest</a></td>
-	    <td>
-	    	<a>setSuccessResponse</a><br>
-			<a>setErrorResponse</a>
-		</td>
-	  </tr>
-	  <tr>
-	    <td><a>subscribeRequest</a></td>
-	    <td>
-	    	<a>subscribeSuccessResponse</a><br>
-			<a>subscribeErrorResponse</a><br>
-			<a>subscriptionNotification</a><br>
-		    <a>subscriptionNotificationError</a>
-		</td>
-	  </tr>
-	  <tr>
-	    <td><a>unsubscribeRequest</a></td>
-	    <td>
-	    	<a>unsubscribeSuccessResponse</a><br>
-			<a>unsubscribeErrorResponse</a>
-		</td>
-	  </tr>
-	</table>
+  <table class="parameters">
+    <tr>
+      <th>Request Objects</th>
+      <th>Response Objects</th>
+    </tr>
+    <tr>
+      <td><a>authorizeRequest</a></td>
+      <td>
+        <a>authorizeSuccessResponse</a><br>
+      <a>authorizeErrorResponse</a>
+    </td>
+    </tr>
+    <tr>
+      <td><a>vssRequest</a></td>
+      <td>
+    <a>vssSuccessResponse</a><br>
+          <a>vssErrorResponse</a>
+      </td>
+    </tr>   
+    <tr>
+      <td><a>getRequest</a></td>
+      <td>
+        <a>getSuccessResponse</a><br>
+      <a>getErrorResponse</a>
+    </td>
+    </tr>
+    <tr>
+      <td><a>setRequest</a></td>
+      <td>
+        <a>setSuccessResponse</a><br>
+      <a>setErrorResponse</a>
+    </td>
+    </tr>
+    <tr>
+      <td><a>subscribeRequest</a></td>
+      <td>
+        <a>subscribeSuccessResponse</a><br>
+      <a>subscribeErrorResponse</a><br>
+      <a>subscriptionNotification</a><br>
+        <a>subscriptionNotificationError</a>
+    </td>
+    </tr>
+    <tr>
+      <td><a>unsubscribeRequest</a></td>
+      <td>
+        <a>unsubscribeSuccessResponse</a><br>
+      <a>unsubscribeErrorResponse</a>
+    </td>
+    </tr>
+  </table>
 
-	<p>The request and response parameters contain a limited number of attributes, defined in the table below.</p>
+  <p>The request and response parameters contain a limited number of attributes, defined in the table below.</p>
+  <h4></h4><h4></h4>
+  <h4>Web IDL Definitions</h4>
+  <table class="parameters">
+    <tr>
+      <th>Attribute</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <td> <dfn>action</dfn></td>
+      <td> <a>Action</a></td>
+      <td> The action that the server is requested to perform.</td>
+    </tr>
+    <tr>
+      <td> <dfn >path</dfn></td>
+      <td>DOMString</td>
+      <td>The path to the desired vehicle signal(s), as defined by the
+      <a href="https://www.w3.org/auto/wg/wiki/Vehicle_Information_Service_Specification#Data_Model">
+        Vehicle Signal Specification (VSS)</a>.</td>
+    </tr>
+    <tr>
+      <td> <dfn>requestId</dfn></td>
+      <td>DOMString</td>
+      <td> Unique id value specified by the client. Returned by the server in
+      the response and used by client to link the request and response
+      messages. The value MAY be an integer or a Universally Unique Identifier (UUID).</td>
+    </tr>
+    <tr>
+      <td> <dfn>subscriptionId</dfn> </td>
+      <td>DOMString</td>
+      <td>Value returned by the server to uniquely identify each subscription.
+      The value MAY be an integer or a Universally Unique Identifier (UUID).</td>
+    </tr>
+    <tr>
+      <td><dfn>tokens</dfn> </td>
+      <td>object</td>
+      <td>Structure containing one or more security token (e.g OAuth2) name/value pairs.</td>
+    </tr>
+    <tr>
+      <td><dfn>timestamp</dfn> </td>
+      <td>DOMTimestamp</td>
+      <td>The Coordinated Universal Time (UTC) time that the server returned the response (expressed as number of milliseconds).</td>
+    </tr>
+    <tr>
+      <td> <dfn>value</dfn> </td>
+      <td> any </td>
+      <td> The data value returned by the server. This could either be a basic
+      type, or a complex type comprised of nested name/value pairs in JSON
+      format.</td>
+    </tr>
+    <tr>
+      <td> <dfn>TTL</dfn> </td>
+      <td> int </td>
+      <td> Returns the time to live of the authentication token in milliseconds.</td>
+    </tr>
+    <tr>
+      <td> <dfn>filters</dfn> </td>
+      <td> object </td>
+      <td>Provides a filtering mechanism to reduce the demands of a subscription on the server.</td>
+    </tr>
+    <tr>
+      <td> <dfn>error</dfn> </td>
+      <td> <a>Error</a> </td>
+      <td> Returns an error code, reason and message.</td>
+    </tr>
+  </table>
+<h4>JSON Schema Definitions</h4>
+<p>The definitions within this section describe the datatypes referenced within the JSON Schema VISS interfaces.</p>
+<pre>
+{
+    "definitions": {
+        "action": {
+            "enum": [ "authorize", "getVSS", "get", "set", "subscribe", "unsubscribe", "unsubscribeAll"],
+            "description": "The type of action requested by the client",
+        },
+        "requestId": {
+            "description": "Returned by the server in the response and used by the client to 
+              link the request and response messages.",
+            "type": "string"
+        },
+        "path": {
+            "description": "The path to the desired vehicle signal(s), as defined by the Vehicle 
+              Signal Specification (VSS).",
+            "type": "string"
+        },
+        "value": {
+            "description": "The path to the desired vehicle signal(s), as defined by the Vehicle 
+              Signal Specification (VSS).",
+            "type": "string"
+        },
+        "timestamp": {
+            "description": "The Coordinated Universal Time (UTC) time that the server returned 
+              the response (expressed as number of milliseconds).",
+            "type": "integer"
+        },
+        "filters": {
+            "description": "May be specified in order to throttle the demands of subscriptions 
+              on the server.",
+            "type": ["object", "null"],
+            "properties": {
+                "interval": {
+                    "description": "The subscription will provide notifications with a period 
+                      equal to this field's value.",
+                    "type": "integer"                   
+                },
+                "range": {
+                    "description": "The subscription will provide notifications only when within 
+                      a given range.",
+                    "type": "object",
+                    "properties":{
+                      "below": {
+                        "description": "The subscription will provide notifications when the value 
+                          is less or equal to this field's value.",
+                        "type": "integer"  
+                      },
+                      "above": {
+                        "description": "The subscription will provide notifications when the value 
+                          is greater than or equal to this field's value.",
+                        "type": "integer"  
+                      },
+                    }                   
+                },
+                "minChange": {
+                    "description": "The subscription will provide notifications when a value has 
+                      changed by the amount specified in this field.",
+                    "type": "integer"                   
+                }
+            }
+        },
+        "subscriptionId":{
+            "description": "Integer handle value which is used to uniquely identify the 
+              subscription.",
+            "type": "string"
+        },
+        "vss":{
+            "description": "Metadata describing the potentially available VSS tree.",
+            "type": "object"
+        },
+        "error": {
+            "description": "Server response for error cases",
+            "type": "object",
+            "properties": {
+                "number": {
+                    "description": "HTTP Status Code Number",
+                    "type": "integer"                   
+                },
+                "reason": {
+                    "description": "Pre-defined string value that can be used to distinguish 
+                      between errors that have the same code",
+                    "type": "string"                    
+                },
+                "message": {
+                    "description": "Message text describing the cause in more detail",
+                    "type": "string"                    
+                },
+            }   
+        }
+    }
+}
+</pre>
 
-	<table class="parameters">
-	  <tr>
-	    <th>Attribute</th>
-	    <th>Type</th>
-	    <th>Description</th>
-	  </tr>
-	  <tr>
-	    <td> <dfn>action</dfn></td>
-	    <td> <a>Action</a></td>
-	    <td> The action that the server is requested to perform.</td>
-	  </tr>
-	  <tr>
-	    <td> <dfn >path</dfn></td>
-	    <td>DOMString</td>
-	    <td>The path to the desired vehicle signal(s), as defined by the
-	    <a href="https://www.w3.org/auto/wg/wiki/Vehicle_Information_Service_Specification#Data_Model">
-	    	Vehicle	Signal Specification (VSS)</a>.</td>
-	  </tr>
-	  <tr>
-	    <td> <dfn>requestId</dfn></td>
-	    <td>DOMString</td>
-	    <td> Unique id value specified by the client. Returned by the server in
-	    the response and used by client to link the request and response
-	    messages. The value MAY be an integer or a Universally Unique Identifier (UUID).</td>
-	  </tr>
-	  <tr>
-	    <td> <dfn>subscriptionId</dfn> </td>
-	    <td>DOMString</td>
-	    <td>Value returned by the server to uniquely identify each subscription.
-	    The value MAY be an integer or a Universally Unique Identifier (UUID).</td>
-	  </tr>
-	  <tr>
-	    <td><dfn>tokens</dfn> </td>
-	    <td>object</td>
-	    <td>Structure containing one or more security token (e.g OAuth2) name/value pairs.</td>
-	  </tr>
-	  <tr>
-	    <td><dfn>timestamp</dfn> </td>
-	    <td>DOMTimestamp</td>
-	    <td>The Coordinated Universal Time (UTC) time that the server returned the response (expressed as number of milliseconds).</td>
-	  </tr>
-	  <tr>
-	    <td> <dfn>value</dfn> </td>
-	    <td> any </td>
-	    <td> The data value returned by the server. This could either be a basic
-	    type, or a complex type comprised of nested name/value pairs in JSON
-	    format.</td>
-	  </tr>
-	  <tr>
-	    <td> <dfn>TTL</dfn> </td>
-	    <td> int </td>
-	    <td> Returns the time to live of the authentication token in milliseconds.</td>
-	  </tr>
-	  <tr>
-	    <td> <dfn>filters</dfn> </td>
-	    <td> object </td>
-	    <td>Provides a filtering mechanism to reduce the demands of a subscription on the server.</td>
-	  </tr>
-	  <tr>
-	    <td> <dfn>error</dfn> </td>
-	    <td> <a>Error</a> </td>
-	    <td> Returns an error code, reason and message.</td>
-	  </tr>
-	</table>
+  <h4>Action</h4>
 
+  <p>The Action enumeration is used to define the type of action requested by the client.
+  All client messages MUST contain a JSON structure that has an 'action' name/value pair and the
+  value of the 'action' property MUST be one of the values specified in the enumeration:</p>
 
-	<h4>Action</h4>
+  <dl title="enum Action" class="idl">
+    <dt>authorize</dt>
+    <dd>Enables client to pass security tokens for Security Principals to the server to support access-control.</dd>
+    <dt><dfn>getVSS</dfn></dt>
+    <dd>Allows the client to request metadata describing signals and data attributes that are potentially accessible.</dd>
+    <dt><dfn>get</dfn></dt>
+    <dd>Enables the client to get a value once.</dd>
+    <dt><dfn>set</dfn></dt>
+    <dd>Enables the client to set a value once.</dd>
+    <dt><dfn>subscribe</dfn></dt>
+    <dd>Enables the client to receive a notification containing a JSON data structure with values for one or more
+      vehicle signals and/or data attributes. The client requests that it is notified when the signal changes on the server.</dd>
+    <dt><dfn>unsubscribe</dfn></dt>
+    <dd>Allows the client to notify the server that it should no longer receive notifications based on that subscription.</dd>
+    <dt><dfn>unsubscribeAll</dfn></dt>
+    <dd>Allows the client to notify the server that it should no longer receive notifications for any active subscription.</dd>
+    </dl>
 
-	<p>The Action enumeration is used to define the type of action requested by the client.
-	All client messages MUST contain a JSON structure that has an 'action' name/value pair and the
-	value of the 'action' property MUST be one of the values specified in the enumeration:</p>
-
-	<dl title="enum Action" class="idl">
-	  <dt>authorize</dt>
-	  <dd>Enables client to pass security tokens for Security Principals to the server to support access-control.</dd>
-	  <dt><dfn>getVSS</dfn></dt>
-	  <dd>Allows the client to request metadata describing signals and data attributes that are potentially accessible.</dd>
-	  <dt><dfn>get</dfn></dt>
-	  <dd>Enables the client to get a value once.</dd>
-	  <dt><dfn>set</dfn></dt>
-	  <dd>Enables the client to set a value once.</dd>
-	  <dt><dfn>subscribe</dfn></dt>
-	  <dd>Enables the client to receive a notification containing a JSON data structure with values for one or more
-	    vehicle signals and/or data attributes. The client requests that it is notified when the signal changes on the server.</dd>
-	  <dt><dfn>unsubscribe</dfn></dt>
-	  <dd>Allows the client to notify the server that it should no longer receive notifications based on that subscription.</dd>
-	  <dt><dfn>unsubscribeAll</dfn></dt>
-	  <dd>Allows the client to notify the server that it should no longer receive notifications for any active subscription.</dd>
-	  </dl>
-
-	<h2>Authorize</h2>
- 	<p>To enable access to signals and data attributes that are under access control, the client MAY optionally pass a message
- 	with an 'authorize' action to the server. The structure of the message and the associated success and error responses
+  <h2>Authorize</h2>
+  <p>To enable access to signals and data attributes that are under access control, the client MAY optionally pass a message
+  with an 'authorize' action to the server. The structure of the message and the associated success and error responses
          are defined below.</p>
+      <h4>WebIDL</h4>
       <pre class="idl">
       interface authorizeRequest
       {
@@ -693,11 +788,91 @@
       interface authorizeErrorResponse
       {
         attribute Action action;
-      	attribute Error error;
+        attribute Error error;
         attribute DOMString requestId;
       };
       </pre>
-
+<h4>JSON Schema</h4>
+<p>The schema for authoriseRequest is:</p>
+<pre>
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "Authorize Request",
+    "description": "Enables the user to set access controls for the vehicle signals",
+    "type": "object",
+    "required": ["action", "tokens", "requestId"],
+    "properties": {
+        "action": {
+            "enum": [ "authorize" ],
+            "description": "The identifier for the authorize request",
+        },
+        "tokens": {
+            "description": "Extensible key-value pair token mechanism used for access control",
+            "type": "object",
+            "properties": {
+                "authorization": {
+                    "description": "The user token, for the user that the client is making 
+                      requests on behalf of",
+                    "type": "string"
+                },
+                "www-vehicle-device": {
+                    "description": "The device token for the originating device that is making 
+                      the request to the server",
+                    "type": "string"
+                }
+            }
+        },
+        "requestId": {
+            "$ref": "#/definitions/requestId"
+        }
+    }
+}
+</pre>
+<p>The schema for authoriseSuccessResponse is:</p>
+<pre>    
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "Authorize Success Response",
+    "description": "The response sent from the server upon a successful authorization request",
+    "type": "object",
+    "required": ["action", "TTL", "requestId"],
+    "properties": {
+        "action": {
+            "enum": [ "authorize" ],
+            "description": "The identifier for the authorize request",
+        },
+        "TTL": {
+            "description": "The time to live of the authorization token",
+            "type": "integer"
+        },
+        "requestId": {
+            "$ref": "#/definitions/requestId"
+        }
+    }
+}
+</pre>
+<p>The schema for authoriseErrorResponse is:</p>
+<pre>  
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "Authorize Error Response",
+    "description": "The response sent from the server upon an unsuccessful authorization request",
+    "type": "object",
+    "required": ["action", "error", "requestId"],
+    "properties": {
+        "action": {
+            "enum": [ "authorize" ],
+            "description": "The identifier for the authorize request",
+        },
+        "error": {
+            "$ref": "#/definitions/error"
+        },
+        "requestId": {
+            "$ref": "#/definitions/requestId"
+        }
+    }
+}
+</pre>
     <p>The server SHALL provide support the following security token types and names:</p>
 
     <table class="parameters">
@@ -725,27 +900,27 @@
     alternatively it MAY include name/value pairs for both the 'authorization' and 'www-vehicle-device' tokens.
     These alternatives are illustrated in the following example:</p>
 
-	<pre class="example highlight">
-		if(userTokenOnly){
-			// Pass user token only
-			vehicle.send('{ "action": "authorize",
-				"tokens": { "authorization": "&lt;user_token_value&gt;" },
-				"requestId": "&lt;some_unique_value&gt;" }');
+  <pre class="example highlight">
+    if(userTokenOnly){
+      // Pass user token only
+      vehicle.send('{ "action": "authorize",
+        "tokens": { "authorization": "&lt;user_token_value&gt;" },
+        "requestId": "&lt;some_unique_value&gt;" }');
 
-		} else if (deviceTokenOnly) {
-			// Pass vehicle/device token only
-			vehicle.send('{ "action": "authorize",
-				"tokens": { "www-vehicle-device": "&lt;device_token_value&gt;" },
-				"requestId": "&lt;some_unique_value&gt;" }');
+    } else if (deviceTokenOnly) {
+      // Pass vehicle/device token only
+      vehicle.send('{ "action": "authorize",
+        "tokens": { "www-vehicle-device": "&lt;device_token_value&gt;" },
+        "requestId": "&lt;some_unique_value&gt;" }');
 
-		} else if (userAndDeviceToken) {
-			// Pass tokens for user and device
-			vehicle.send('{ "action": "authorize",
-				"tokens": { "authorization": "&lt;user_token_value&gt;",
-					"www-vehicle-device": "&lt;device_token_value&gt;" },
-				"requestId": "&lt;some_unique_value&gt;" }');
-		}
-	</pre>
+    } else if (userAndDeviceToken) {
+      // Pass tokens for user and device
+      vehicle.send('{ "action": "authorize",
+        "tokens": { "authorization": "&lt;user_token_value&gt;",
+          "www-vehicle-device": "&lt;device_token_value&gt;" },
+        "requestId": "&lt;some_unique_value&gt;" }');
+    }
+  </pre>
 
     <p>This specification purposely does not define the token structure and the methods to secure tokens. Providers of the server may choose their own preferred formats and security methods. The server may also treat tokens as opaque structures and pass them on to underlying software layers for evaluation.</p>
 
@@ -774,27 +949,27 @@
       </tr>
     </table>
 
-    	<p>It is expected that client and server use the same token format. If a client presents a token using a 
-	    format that is not understood by the server, the server rejects the token.</p>
-	      
-	<p>In order to make dictionary attacks more difficult, authentication will be denied after a number of failed authentication 
-		requests. A 401 (Unauthorised) too_many_requests error will be sent by the server in response 
-		to any subsequent authentication requests. The number of failed requests and the period 
-		of time during which attempts will be denied is to be determined by the implementation.</p>    
-	
-	<h2>VSS Request</h2>
-	<p>The client MAY use the 'getVSS' action to request metadata describing the potentially available VSS tree. It does
-	this by sending a 'vssRequest' message to the server. If the server is able to return the VSS metadata, then this
-	is returned using a 'vssSuccessResponse' message. If an error occurs, the server returns a 'vssErrorResponse'
-	message to the client.</p>
+      <p>It is expected that client and server use the same token format. If a client presents a token using a 
+      format that is not understood by the server, the server rejects the token.</p>
+        
+  <p>In order to make dictionary attacks more difficult, authentication will be denied after a number of failed authentication 
+    requests. A 401 (Unauthorised) too_many_requests error will be sent by the server in response 
+    to any subsequent authentication requests. The number of failed requests and the period 
+    of time during which attempts will be denied is to be determined by the implementation.</p>    
+  
+  <h2>VSS Request</h2>
+  <p>The client MAY use the 'getVSS' action to request metadata describing the potentially available VSS tree. It does
+  this by sending a 'vssRequest' message to the server. If the server is able to return the VSS metadata, then this
+  is returned using a 'vssSuccessResponse' message. If an error occurs, the server returns a 'vssErrorResponse'
+  message to the client.</p>
 
-	<p>The client is able to request VSS metadata from any point in the VSS tree, such that only the metadata for the signals
-	within the given branch of the tree is returned. For example, only metadata for the chassis branch of the tree is returned
-	when the chassis path is specified. If the path is not set, the response contains the metadata for the entire VSS tree.</p>
+  <p>The client is able to request VSS metadata from any point in the VSS tree, such that only the metadata for the signals
+  within the given branch of the tree is returned. For example, only metadata for the chassis branch of the tree is returned
+  when the chassis path is specified. If the path is not set, the response contains the metadata for the entire VSS tree.</p>
 
         <p>If more than one 'getVSS' call is made with the same 'vssRequest' message content but at different times, the metadata
         in the 'vssSuccessResponse' SHALL be the same provided the access-control state of the WebSocket channel has not changed.</p>
-
+      <h4>Web IDL</h4>
       <pre class="idl">
       interface vssRequest {
         attribute Action action;
@@ -814,29 +989,98 @@
         attribute Error error;
       };
       </pre>
-
+<h4>JSON Schema</h4>
+<p>The schema for vssRequest is:</p>
+<pre>
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "VSS Request",
+    "description": "Request metadata describing the potentially available VSS tree",
+    "type": "object",
+    "required": ["action", "path", "requestId"],
+    "properties": {
+        "action": {
+            "enum": [ "getVSS" ],
+            "description": "The identifier for the getVSS request",
+        },
+        "path": {
+            "$ref": "#/definitions/path",
+            "type": ["string", "null"]
+        },
+        "requestId": {
+            "$ref": "#/definitions/requestId"
+        }
+    }
+}
+</pre>
+<p>The schema for vssSuccessResponse is:</p>
+<pre>
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "VSS Success Response",
+    "description": "The response sent from the server upon a successful getVSS request",
+    "type": "object",
+    "required": ["action", "requestId", "vss"],
+    "properties": {
+        "action": {
+            "enum": [ "getVSS" ],
+            "description": "The identifier for the getVSS request",
+        },
+        "requestId": {
+            "$ref": "#/definitions/requestId"
+        },
+        "vss": {
+            "$ref": "#/definitions/vss"
+        }
+    }
+}
+</pre>
+<p>The schema for vssErrorResponse is:</p>
+<pre>
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "VSS Error Response",
+    "description": "The response sent from the server upon an unsuccessful getVSS request",
+    "type": "object",
+    "required": ["action", "requestId", "error", "timestamp"],
+    "properties": {
+        "action": {
+            "enum": [ "getVSS" ],
+            "description": "The identifier for the getVSS request",
+        },
+        "requestId": {
+            "$ref": "#/definitions/requestId"
+        },
+        "error": {
+            "$ref": "#/definitions/error"
+        }
+    }
+}
+</pre>
+      <h4>Examples</h4>
     <p>The following data flow example shows a request for the signal structure within the Signal.Body branch containing signals related to the vehicle body.</p>
 
     <pre class="highlight hljs javascript">
-	client -> {
-		"action": "getVSS",
-		"path": "Signal.Body",
-		"requestId": "3874"
-	}
-	receive <- {
-		"action": "getVSS",
-		"requestId": "3874",
-		"vss": { }
-	}
-	</pre>
+  client -> {
+    "action": "getVSS",
+    "path": "Signal.Body",
+    "requestId": "3874"
+  }
+  receive <- {
+    "action": "getVSS",
+    "requestId": "3874",
+    "vss": { }
+  }
+  </pre>
 
 
-	<h2>Get</h2>
-	<p>The client MAY send a 'getRequest' message to the server to get the value of one or more vehicle signals and data
-	attributes. If the server is able to satisfy the request it SHALL return a 'getSuccessResponse' message. If the server
-	is unable to fulfil the request, e.g. because the client is not authorised to retrieve one or more of the signals,
-	then the server SHALL return a 'getErrorResponse'. The structure of these message objects is defined below:</p>
+  <h2>Get</h2>
+  <p>The client MAY send a 'getRequest' message to the server to get the value of one or more vehicle signals and data
+  attributes. If the server is able to satisfy the request it SHALL return a 'getSuccessResponse' message. If the server
+  is unable to fulfil the request, e.g. because the client is not authorised to retrieve one or more of the signals,
+  then the server SHALL return a 'getErrorResponse'. The structure of these message objects is defined below:</p>
 
+      <h4>Web IDL</h4>
       <pre class="idl">
       interface getRequest
       {
@@ -862,115 +1106,191 @@
       };
       </pre>
 
-      <p>It is important to note that all examples involving paths are illustrative. Valid path values and the signals and data
+<h4>JSON Schema</h4>
+<p>The schema for getRequest is:</p>
+<pre>
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "Get Request",
+    "description": "Get the value of one or more vehicle signals and data attributes",
+    "type": "object",
+    "required": ["action", "path", "requestId"],
+    "properties": {
+        "action": {
+            "enum": [ "get" ],
+            "description": "The identifier for the get request",
+        },
+        "path": {
+            "$ref": "#/definitions/path"
+        },
+        "requestId": {
+            "$ref": "#/definitions/requestId"
+        }
+    }
+}
+</pre>
+<p>The schema for getSuccessResponse is:</p>
+<pre>
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "Get Success Response",
+    "description": "The response sent from the server upon a successful get request",
+    "type": "object",
+    "required": ["action", "requestId", "value", "timestamp"],
+    "properties": {
+        "action": {
+            "enum": [ "get" ],
+            "description": "The identifier for the get request",
+        },
+        "requestId": {
+            "$ref": "#/definitions/requestId"
+        },
+        "value": {
+            "$ref": "#/definitions/value"
+        },
+        "timestamp": {
+            "$ref": "#/definitions/timestamp"
+        }
+    }
+}
+</pre>
+<p>The schema for getErrorResponse is:</p>
+<pre>
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "Get Error Response",
+    "description": "The response sent from the server upon an unsuccessful get request",
+    "type": "object",
+    "required": ["action", "requestId", "error", "timestamp"],
+    "properties": {
+        "action": {
+            "enum": [ "get" ],
+            "description": "The identifier for the get request",
+        },
+        "requestId": {
+            "$ref": "#/definitions/requestId"
+        },
+        "error": {
+            "$ref": "#/definitions/error"
+        },
+        "timestamp": {
+            "$ref": "#/definitions/timestamp"
+        }
+    }
+}
+
+</pre>
+
+      <h4>Examples</h4>
+       <p>It is important to note that all examples involving paths are illustrative. Valid path values and the signals and data
       attributes that correspond to a particular path are defined in the Vehicle Signal Specification.</p>
 
       <p>The example below shows the JSON structure for a 'getRequest' message sent by the client to obtain the engine RPM value
       and a 'getSuccessResponse' returned by the server.</p>
-	<pre class="highlight hljs javascript">
-	client -> {
-		"action": "get",
-		"path": "Signal.Drivetrain.InternalCombustionEngine.RPM",
-		"requestId": "8756"
-	}
+  <pre class="highlight hljs javascript">
+  client -> {
+    "action": "get",
+    "path": "Signal.Drivetrain.InternalCombustionEngine.RPM",
+    "requestId": "8756"
+  }
 
-	receive <- {
-		"action": "get",
-		"requestId": "8756",
-		"value": 2372,
-		"timestamp": &lt;DOMTimeStamp&gt;
-	}
-	</pre>
+  receive <- {
+    "action": "get",
+    "requestId": "8756",
+    "value": 2372,
+    "timestamp": &lt;DOMTimeStamp&gt;
+  }
+  </pre>
 
-	<p>In the case where the server returns a value that is a <dfn>complex type</dfn>, i.e. a value that
-	is not a single basic JavaScript type (e.g. string, number, boolean), the value SHALL be returned as
-	a set of name/value pairs in a JSON object structure. The format MUST be as defined by the Vehicle Signal Specification.<p>
+  <p>In the case where the server returns a value that is a <dfn>complex type</dfn>, i.e. a value that
+  is not a single basic JavaScript type (e.g. string, number, boolean), the value SHALL be returned as
+  a set of name/value pairs in a JSON object structure. The format MUST be as defined by the Vehicle Signal Specification.<p>
 
-	<p>The following shows an example of a 'getRequest' that results in the server returning a 'getSuccessResponse' with a value
-	that is a complex type:</p>
-	<pre class="highlight hljs javascript">
-	client -> {
-		"action": "get",
-		"path": "Signal.Body.Trunk",
-		"requestId": "9078"
-	}
+  <p>The following shows an example of a 'getRequest' that results in the server returning a 'getSuccessResponse' with a value
+  that is a complex type:</p>
+  <pre class="highlight hljs javascript">
+  client -> {
+    "action": "get",
+    "path": "Signal.Body.Trunk",
+    "requestId": "9078"
+  }
 
-	receive <- {
-		"action": "get",
-		"requestId": "9078",
-		"value": { "Signal.Body.Trunk.IsLocked": false,
-			"Signal.Body.Trunk.IsOpen": true },
-		"timestamp": &lt;DOMTimeStamp&gt;
-	}
-	</pre>
+  receive <- {
+    "action": "get",
+    "requestId": "9078",
+    "value": { "Signal.Body.Trunk.IsLocked": false,
+      "Signal.Body.Trunk.IsOpen": true },
+    "timestamp": &lt;DOMTimeStamp&gt;
+  }
+  </pre>
 
-	<p>One or more wildcards (denoted by asterisk '*') MAY be included at
-	any level in the path to specify that all nodes at that level are to be included.</p>
+  <p>One or more wildcards (denoted by asterisk '*') MAY be included at
+  any level in the path to specify that all nodes at that level are to be included.</p>
 
-	<p>In the example below, the path in the 'getRequest' includes a wildcard at the levels above
-	the leaf (signal) node, in order to request just the 'IsLocked' state for all doors.</p>
-	<pre class="highlight hljs javascript">
-	client -> {
-		"action": "get",
-		"path": "Signal.Cabin.Door.*.IsLocked",
-		"requestId": "4523"
-	}
+  <p>In the example below, the path in the 'getRequest' includes a wildcard at the levels above
+  the leaf (signal) node, in order to request just the 'IsLocked' state for all doors.</p>
+  <pre class="highlight hljs javascript">
+  client -> {
+    "action": "get",
+    "path": "Signal.Cabin.Door.*.IsLocked",
+    "requestId": "4523"
+  }
 
-	receive <- {
-		"action": "get",
-		"requestId": "4523",
-		"value": [ {"Signal.Cabin.Door.Row1.Right.IsLocked" : true },
-		           {"Signal.Cabin.Door.Row1.Left.IsLocked" : true },
-			       {"Signal.Cabin.Door.Row2.Right.IsLocked" : false },
-			       {"Signal.Cabin.Door.Row2.Left.IsLocked" : true } ],
-		"timestamp": &lt;DOMTimeStamp&gt;
-	}
-	</pre>
+  receive <- {
+    "action": "get",
+    "requestId": "4523",
+    "value": [ {"Signal.Cabin.Door.Row1.Right.IsLocked" : true },
+               {"Signal.Cabin.Door.Row1.Left.IsLocked" : true },
+             {"Signal.Cabin.Door.Row2.Right.IsLocked" : false },
+             {"Signal.Cabin.Door.Row2.Left.IsLocked" : true } ],
+    "timestamp": &lt;DOMTimeStamp&gt;
+  }
+  </pre>
 
-	<p>In this example, a complex type with a nested array is returned in response to the Path: "Signal.Cabin.Door.*"
-	which denotes: 'Return all signals and data attributes for all doors'. For simplicity, the example
-	assumes that the VSS definition for each door only has two attributes 'IsLocked' and 'Window.Position'.</p>
-	<pre class="highlight hljs javascript">
-	client -> {
-		"action": "get",
-		"path": "Signal.Cabin.Door.*",
-		"requestId": "6745"
-	}
+  <p>In this example, a complex type with a nested array is returned in response to the Path: "Signal.Cabin.Door.*"
+  which denotes: 'Return all signals and data attributes for all doors'. For simplicity, the example
+  assumes that the VSS definition for each door only has two attributes 'IsLocked' and 'Window.Position'.</p>
+  <pre class="highlight hljs javascript">
+  client -> {
+    "action": "get",
+    "path": "Signal.Cabin.Door.*",
+    "requestId": "6745"
+  }
 
-	receive <- {
-		"action": "get",
-		"requestId": "6745",
-		"value": [ {"Signal.Cabin.Door.Row1.Right.IsLocked" : true, "Signal.Cabin.Door.Row1.Right.Window.Position": 50},
-		           {"Signal.Cabin.Door.Row1.Left.IsLocked" : true, "Signal.Cabin.Door.Row1.Left.Window.Position": 23},
-		           {"Signal.Cabin.Door.Row2.Right.IsLocked" : false, "Signal.Cabin.Door.Row2.Right.Window.Position": 100 },
-		           {"Signal.Cabin.Door.Row2.Left.IsLocked": true, "Signal.Cabin.Door.Row2.Left.Window.Position": 0 } ],
-		"timestamp": &lt;DOMTimeStamp&gt;
-	}
-	</pre>
-	<p>The following shows a request for non-existent data</p>
-	<pre class="highlight hljs javascript">
-	client -> {
-		"action": "get",
-		"path": "Body.Flux.Capacitor",
-		"requestId": "1245"
-	}
+  receive <- {
+    "action": "get",
+    "requestId": "6745",
+    "value": [ {"Signal.Cabin.Door.Row1.Right.IsLocked" : true, "Signal.Cabin.Door.Row1.Right.Window.Position": 50},
+               {"Signal.Cabin.Door.Row1.Left.IsLocked" : true, "Signal.Cabin.Door.Row1.Left.Window.Position": 23},
+               {"Signal.Cabin.Door.Row2.Right.IsLocked" : false, "Signal.Cabin.Door.Row2.Right.Window.Position": 100 },
+               {"Signal.Cabin.Door.Row2.Left.IsLocked": true, "Signal.Cabin.Door.Row2.Left.Window.Position": 0 } ],
+    "timestamp": &lt;DOMTimeStamp&gt;
+  }
+  </pre>
+  <p>The following shows a request for non-existent data</p>
+  <pre class="highlight hljs javascript">
+  client -> {
+    "action": "get",
+    "path": "Body.Flux.Capacitor",
+    "requestId": "1245"
+  }
 
-	receive <- {
-		"action": "get",
-		"requestId": "1245",
-		"error": { "number":404,
-			"reason": "invalid_path",
-			"message": "The specified data path does not exist." },
-		"timestamp": &lt;DOMTimeStamp&gt;
-	}
-	</pre>
-	<h2>Set</h2>
+  receive <- {
+    "action": "get",
+    "requestId": "1245",
+    "error": { "number":404,
+      "reason": "invalid_path",
+      "message": "The specified data path does not exist." },
+    "timestamp": &lt;DOMTimeStamp&gt;
+  }
+  </pre>
+  <h2>Set</h2>
 
-	<p>The client may request that the server sets the value of a signal e.g. to lock a door or open a window by sending
-	a 'setRequest' message to the server. If the server is able to satisfy the request it SHALL return a 'setSuccessResponse'
-	message. If an error occurs e.g. because the client is not authorised to set the requested value, or the value is read-only,
-	the server SHALL return a 'setErrorResponse' message.<p>
-
+  <p>The client may request that the server sets the value of a signal e.g. to lock a door or open a window by sending
+  a 'setRequest' message to the server. If the server is able to satisfy the request it SHALL return a 'setSuccessResponse'
+  message. If an error occurs e.g. because the client is not authorised to set the requested value, or the value is read-only,
+  the server SHALL return a 'setErrorResponse' message.<p>
+      <h4>Web IDL</h4>
       <pre class="idl">
       interface setRequest {
         attribute Action action;
@@ -980,7 +1300,7 @@
       };
 
       interface setSuccessResponse {
-	      attribute Action action;
+        attribute Action action;
         attribute DOMString requestId;
         attribute DOMTimeStamp timestamp;
       };
@@ -992,74 +1312,147 @@
         attribute DOMTimeStamp timestamp;
       };
       </pre>
-
-	<p>Successfully set a signal.</p>
-	<pre class="highlight hljs javascript">
-	client -> {
-		"action": "set",
-		"path": "Signal.Cabin.Door.*.IsLocked",
-		"value":{ [ {"Row1.Right.IsLocked" : true },
-		            {"Row1.Left.IsLocked" : true },
-				    {"Row2.Right.IsLocked" : true },
-				    {"Row2.Left.IsLocked" : true } ] },
+<h4>JSON Schema</h4>
+<p>The schema for setRequest is:</p>
+<pre>
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "Set Request",
+    "description": "Enables the client to set a value once.",
+    "type": "object",
+    "required": ["action", "path", "value", "requestId"],
+    "properties": {
+        "action": {
+            "enum": [ "set" ],
+            "description": "The identifier for the set request",
+        },
+        "path": {
+            "$ref": "#/definitions/path"
+        },
+        "value": {
+            "$ref": "#/definitions/value"
+        },
+        "requestId": {
+            "$ref": "#/definitions/requestId"
+        }
+    }
+}
+</pre>
+<p>The schema for setSuccessResponse is:</p>
+<pre>
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "Set Success Response",
+    "description": "The response sent from the server upon a successful set request",
+    "type": "object",
+    "required": ["action", "requestId", "timestamp"],
+    "properties": {
+        "action": {
+            "enum": [ "set" ],
+            "description": "The identifier for the set request",
+        },
+        "requestId": {
+            "$ref": "#/definitions/requestId"
+        },
+        "timestamp": {
+            "$ref": "#/definitions/timestamp"
+        }
+    }
+}
+</pre>
+<p>The schema for setErrorResponse is:</p>
+<pre>
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "Set Error Response",
+    "description": "The response sent from the server upon an unsuccessful set request",
+    "type": "object",
+    "required": ["action", "requestId", "error", "timestamp"],
+    "properties": {
+        "action": {
+            "enum": [ "set" ],
+            "description": "The identifier for the set request",
+        },
+        "requestId": {
+            "$ref": "#/definitions/requestId"
+        },
+        "error": {
+            "$ref": "#/definitions/error"
+        },
+        "timestamp": {
+            "$ref": "#/definitions/timestamp"
+        }
+    }
+}
+</pre>
+<h4>Examples</h4>
+  <p>Successfully set a signal.</p>
+  <pre class="highlight hljs javascript">
+  client -> {
+    "action": "set",
+    "path": "Signal.Cabin.Door.*.IsLocked",
+    "value":{ [ {"Row1.Right.IsLocked" : true },
+                {"Row1.Left.IsLocked" : true },
+            {"Row2.Right.IsLocked" : true },
+            {"Row2.Left.IsLocked" : true } ] },
     "requestId": "5689"
-		}
+    }
 
-	receive <- {
-		"action": "set",
+  receive <- {
+    "action": "set",
     "requestId": "5689",
-		"timestamp": &lt;DOMTimeStamp&gt;
-	}
-	</pre>
-	<p>Unsuccessful set. The value cannot be set.</p>
-	<pre class="highlight hljs javascript">
-	client -> {
-		"action": "set",
-		"path": "Signal.Drivetrain.InternalCombustionEngine.RPM",
-		"value": 2000,
-    "requestId": "8912"
-	}
-
-	receive <- {
-		"action": "set",
-    "requestId": "8912",
-		"error": { "number": 401,
-			"reason": "read_only",
-			"message": "The desired signal cannot be set since it is a read only signal"},
     "timestamp": &lt;DOMTimeStamp&gt;
-		}
-	</pre>
-	<p>Unsuccessful set. The value does not exist in the specified path.</p>
-	<pre class="highlight hljs javascript">
-	client -> {
-		"action": "set",
-		"path": "Signal.Drivetrain.InternalCombustionEngine.RPM",
-		"value": { "locked" : true }
+  }
+  </pre>
+  <p>Unsuccessful set. The value cannot be set.</p>
+  <pre class="highlight hljs javascript">
+  client -> {
+    "action": "set",
+    "path": "Signal.Drivetrain.InternalCombustionEngine.RPM",
+    "value": 2000,
+    "requestId": "8912"
+  }
+
+  receive <- {
+    "action": "set",
+    "requestId": "8912",
+    "error": { "number": 401,
+      "reason": "read_only",
+      "message": "The desired signal cannot be set since it is a read only signal"},
+    "timestamp": &lt;DOMTimeStamp&gt;
+    }
+  </pre>
+  <p>Unsuccessful set. The value does not exist in the specified path.</p>
+  <pre class="highlight hljs javascript">
+  client -> {
+    "action": "set",
+    "path": "Signal.Drivetrain.InternalCombustionEngine.RPM",
+    "value": { "locked" : true }
     "requestId": "2311"
-	}
+  }
 
-	receive <- {
-		"action": "set",
+  receive <- {
+    "action": "set",
     "requestId": "2311",
-		"error": { "number": 400,
-			"reason": "bad_request" ,
-			"message": "The server is unable to fulfil the client
-					request because the request is malformed."},
+    "error": { "number": 400,
+      "reason": "bad_request" ,
+      "message": "The server is unable to fulfil the client
+          request because the request is malformed."},
       "timestamp": &lt;DOMTimeStamp&gt;
-		}
-	</pre>
-	<h2>Subscribe</h2>
-	<p>Vehicle data subscriptions provide data to the client whenever the signal changes on the server,
-	unless otherwise specified using Server Side Filtering. The server MAY reduce the number of notifications
-	sent to the client in order to reduce processing demands, particularly when the client has subscribed to
-	continuously varying signals.</p>
+    }
+  </pre>
+  <h2>Subscribe</h2>
+  <p>Vehicle data subscriptions provide data to the client whenever the signal changes on the server,
+  unless otherwise specified using Server Side Filtering. The server MAY reduce the number of notifications
+  sent to the client in order to reduce processing demands, particularly when the client has subscribed to
+  continuously varying signals.</p>
 
-	<p>When the client makes a request to the server to create a new
-	subscription, a JSON data object is returned. This object contains
-	the attributes that were passed to the server to make the
-	subscription and a 'subscriptionId' integer handle value which is used to
-	uniquely identify the subscription.</p>
-
+  <p>When the client makes a request to the server to create a new
+  subscription, a JSON data object is returned. This object contains
+  the attributes that were passed to the server to make the
+  subscription and a 'subscriptionId' integer handle value which is used to
+  uniquely identify the subscription.</p>
+      <h4>Web IDL</h4>
       <pre class="idl">
 
       interface subscribeRequest {
@@ -1095,21 +1488,144 @@
         attribute DOMTimeStamp timestamp;
       };
       </pre>
+      <h4>JSON Schema</h4>
+ <p>The schema for subscribeRequest is:</p>
+<pre>
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "Subscribe Request",
+    "description": "Allows the client to subscribe to time-varying signal notifications on the 
+      server.",
+    "type": "object",
+    "required": ["action", "path", "filters", "requestId"],
+    "properties": {
+        "action": {
+            "enum": [ "subscribe" ],
+            "description": "The identifier for the subscription request",
+        },
+        "path": {
+            "$ref": "#/definitions/path"
+        },
+        "filters": {
+            "$ref": "#/definitions/filters"
+        },
+        "requestId": {
+            "$ref": "#/definitions/requestId"
+        }
+    }
+}
+</pre>
+<p>The schema for subscribeSuccessResponse is:</p>
+<pre>
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "Subscribe Success Response",
+    "description": "The response sent from the server upon a successful subscription request",
+    "type": "object",
+    "required": ["action", "requestId", "subscriptionId", "timestamp"],
+    "properties": {
+        "action": {
+            "enum": [ "subscribe" ],
+            "description": "The identifier for the subscription request",
+        },
+        "requestId": {
+            "$ref": "#/definitions/requestId"
+        },
+        "subscriptionId": {
+            "$ref": "#/definitions/subscriptionId"
+        },                
+        "timestamp": {
+            "$ref": "#/definitions/timestamp"
+        }
+    }
+}
+</pre>
+<p>The schema for subscribeErrorResponse is:</p>
+<pre>
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "Subscribe Error Response",
+    "description": "The response sent from the server upon an unsuccessful subscribe request",
+    "type": "object",
+    "required": ["action", "requestId", "error", "timestamp"],
+    "properties": {
+        "action": {
+            "enum": [ "subscribe" ],
+            "description": "The identifier for the subscription request",
+        },
+        "requestId": {
+            "$ref": "#/definitions/requestId"
+        },
+        "error": {
+            "$ref": "#/definitions/error"
+        },
+        "timestamp": {
+            "$ref": "#/definitions/timestamp"
+        }
+    }
+}
+</pre>
+<p>The schema for subscriptionNotification is:</p>
+<pre>
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "Subscription Notification",
+    "description": "The response sent from the server upon an unsuccessful subscribe request",
+    "type": "object",
+    "required": ["subscriptionId", "value", "timestamp"],
+    "properties": {
+        "subscriptionId": {
+            "$ref": "#/definitions/subscriptionId"
+        },
+        "value": {
+            "$ref": "#/definitions/value"
+        },
+        "timestamp": {
+            "$ref": "#/definitions/timestamp"
+        }
+    }
+}
+</pre>
+<p>The schema for subscriptionNotificationError is:</p>
+<pre>
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "Subscription Notification Error",
+    "description": "Error message sent by the server when there is an error with an existing 
+      subscription",
+    "type": "object",
+    "required": ["subscriptionId", "error", "timestamp"],
+    "properties": {
+        "subscriptionId": {
+            "$ref": "#/definitions/subscriptionId"
+        },
+        "error": {
+            "$ref": "#/definitions/error"
+        },
+        "timestamp": {
+            "$ref": "#/definitions/timestamp"
+        }
+    }
+}
+</pre>
+
+
+  <h4>Examples</h4>
 
   For example when client need to continuously receive "Signal.Drivetrain.Transmission.TripMeter" information from the server, it can use "subscribe" action with the target property like below.
-	<pre class="highlight hljs javascript">
-	client -> {
-		"action": "subscribe",
-		"path": "Signal.Drivetrain.Transmission.TripMeter",
-		"requestId": "1004"
-	}
-
-	receive <- {
+  <pre class="highlight hljs javascript">
+  client -> {
     "action": "subscribe",
-		"requestId": "1004",
+    "path": "Signal.Drivetrain.Transmission.TripMeter",
+    "requestId": "1004"
+  }
+
+  receive <- {
+    "action": "subscribe",
+    "requestId": "1004",
     "subscriptionId": "35472",
     "timestamp": &lt;DOMTimeStamp&gt;
-	}
+  }
   </pre>
   When this "subscribe" request has been successed, client will receive a notificaton with changing value continuously as below JSON structure.
 
@@ -1118,79 +1634,79 @@
     "subscriptionId": "35472",
     "value": 36912,
     "timestamp": &lt;DOMTimeStamp&gt;
-	}
+  }
   </pre>
 
-	</pre>
-	<p>The client can use the 'requestId' value to associate the successful
-	subscription response with the original request.</p>
+  </pre>
+  <p>The client can use the 'requestId' value to associate the successful
+  subscription response with the original request.</p>
 
-	<p>The 'subscriptionId' value is a unique value, created by the server and
-	which is used internally by the server to manage subscriptions
-	on that WebSocket instance.</p>
+  <p>The 'subscriptionId' value is a unique value, created by the server and
+  which is used internally by the server to manage subscriptions
+  on that WebSocket instance.</p>
 
-	<p>The subscription id value may be used by the client to
-	unsubscribe from receiving future notifications, by passing the
-	handle value to the server with the unsubscribe action.</p>
+  <p>The subscription id value may be used by the client to
+  unsubscribe from receiving future notifications, by passing the
+  handle value to the server with the unsubscribe action.</p>
 
-	<p>To differentiate subscription response from responses for ‘GET’
-	requests, subscription responses shall additionally include the
-	subscription id value that identifies the subscription that
-	triggered that notification.</p>
+  <p>To differentiate subscription response from responses for ‘GET’
+  requests, subscription responses shall additionally include the
+  subscription id value that identifies the subscription that
+  triggered that notification.</p>
 
-	<p>The server ensures that a new unique subscription id value is
-	returned for each successful subscription request on a particular
-	WebSocket connection. However the server does not guarantee that
-	subscription handle values are unique between different WebSocket
-	instances.</p>
+  <p>The server ensures that a new unique subscription id value is
+  returned for each successful subscription request on a particular
+  WebSocket connection. However the server does not guarantee that
+  subscription handle values are unique between different WebSocket
+  instances.</p>
 
-	<p>Once the subscription is successfully registered with the server,
-	the client receives subscription notifications containing the requested
-	data, at a rate defined either by the server or by the server side filter. If there is an
-	error with an existing subscription a subscriptionNotificationError is
-	received by the client. This allows the client to handle the error, such as to reduce the subscription
-	frequency if the server is unable to satisfy the initial demands of the client.</p>
-	
-	<p>If the authentication token expires whilst a subscription is active, the server will send a 
-	subscriptionNotificationError for each subscription that can no longer be fulfilled. The client is then 
-	responsible for requesting a renewed authentication token.</p>
-	
-	<p>After the client authentication token has expired, the server MAY continue to send notifications for data that
-	is not subject to access control restrictions. The client will NOT receive notifications for subscriptions that require
-	a valid authentication token until the client sends a renewed authentication token to the server.</p>
-	
-	<p> If a new authentication token is presented by the client to the server in a timely manner,	all existing subscriptions
-	will continue to cause notifications to be sent from the server, provided the security principal
-	has not changed. The time window during which the client MAY re-authenticate and subscriptions continue WILL be 
-	implementation dependent.</p>
-	
-	<p>At any time the server MUST only send subscription notifications for data that the client is authorised to access.</p>
+  <p>Once the subscription is successfully registered with the server,
+  the client receives subscription notifications containing the requested
+  data, at a rate defined either by the server or by the server side filter. If there is an
+  error with an existing subscription a subscriptionNotificationError is
+  received by the client. This allows the client to handle the error, such as to reduce the subscription
+  frequency if the server is unable to satisfy the initial demands of the client.</p>
+  
+  <p>If the authentication token expires whilst a subscription is active, the server will send a 
+  subscriptionNotificationError for each subscription that can no longer be fulfilled. The client is then 
+  responsible for requesting a renewed authentication token.</p>
+  
+  <p>After the client authentication token has expired, the server MAY continue to send notifications for data that
+  is not subject to access control restrictions. The client will NOT receive notifications for subscriptions that require
+  a valid authentication token until the client sends a renewed authentication token to the server.</p>
+  
+  <p> If a new authentication token is presented by the client to the server in a timely manner,  all existing subscriptions
+  will continue to cause notifications to be sent from the server, provided the security principal
+  has not changed. The time window during which the client MAY re-authenticate and subscriptions continue WILL be 
+  implementation dependent.</p>
+  
+  <p>At any time the server MUST only send subscription notifications for data that the client is authorised to access.</p>
 
         <p>The server MAY close the WebSocket connection at any time and in so doing, terminate all subscriptions for the client. 
-	The client is then responsible for renewing subscriptions. The client MUST close the WebSocket connection if the server 
-	data is no longer required.</p>
+  The client is then responsible for renewing subscriptions. The client MUST close the WebSocket connection if the server 
+  data is no longer required.</p>
 
-  	<p>An example of a subscription can be found <a href="#introduction">here</a>.</p>
+    <p>An example of a subscription can be found <a href="#introduction">here</a>.</p>
 
-	<h2>Unsubscribe</h2>
+  <h2>Unsubscribe</h2>
         <p>To unsubscribe from a subscription, the client SHALL send an 'unsubscribeRequest' message to the server. This is
         comprised of a JSON structure which contains an action property set to 'unsubscribe' and a string containing the
         'subscriptionId'. If the server is able to satisfy the request it returns an 'unsubscribeSuccessResponse'. If an error
-	occurs, for example because an invalid subscriptionId is passed to the server, an 'unsubscribeErrorResponse' is returned.</p>
+  occurs, for example because an invalid subscriptionId is passed to the server, an 'unsubscribeErrorResponse' is returned.</p>
 
-	<p>The client MAY unsubscribe from all of its subscriptions by sending an 'unsubscribeRequest' with the action property set to
-	'unsubscribeAll'. This does not require a subscriptionId value. If the request is successful, or there are no active subscriptions 
-	to unsubscribe from, this will return an 'unsubscribeSuccessResponse'.</p>
+  <p>The client MAY unsubscribe from all of its subscriptions by sending an 'unsubscribeRequest' with the action property set to
+  'unsubscribeAll'. This does not require a subscriptionId value. If the request is successful, or there are no active subscriptions 
+  to unsubscribe from, this will return an 'unsubscribeSuccessResponse'.</p>
 
-	<p>If the client has created more than one WebSocket instance, it MUST always unsubscribe using the same WebSocket instance
-	that was originally used to create the subscription.</p>
+  <p>If the client has created more than one WebSocket instance, it MUST always unsubscribe using the same WebSocket instance
+  that was originally used to create the subscription.</p>
 
-	<p>The client should always unsubscribe from receiving notifications when it is no longer using the data. Over a long
-	vehicle journey, this significantly reduces the processing load on the server and allow the server to free memory.
-	It therefore makes it more likely that the server remains responsive to future requests from the client.</p>
+  <p>The client should always unsubscribe from receiving notifications when it is no longer using the data. Over a long
+  vehicle journey, this significantly reduces the processing load on the server and allow the server to free memory.
+  It therefore makes it more likely that the server remains responsive to future requests from the client.</p>
 
-	<p>The 'unsubscribe' message structures are defined below:</p>
-
+  <p>The 'unsubscribe' message structures are defined below:</p>
+  <h4>Web IDL</h4>
       <pre class="idl">
       interface unsubscribeRequest {
         attribute Action action;
@@ -1213,69 +1729,154 @@
         attribute DOMTimeStamp timestamp;
       };
       </pre>
-	Unsubscribe from a single subscription.
-	<pre class="highlight hljs javascript">
-	client -> {
-		"action": "unsubscribe",
-		"subscriptionId": "102",
-		"requestId": "5264"
-	}
+      <h4>JSON Schema</h4>
+  <p>The schema for unsubscribeRequest is:</p>
+<pre>
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "Unsubscribe Request",
+    "description": "Allows the client to unsubscribe to time-varying signal notifications on 
+      the server.",
+    "type": "object",
+    "required": ["action", "subscriptionId", "requestId"],
+    "properties": {
+        "action": {
+            "enum": [ "unsubscribe", "unsubscribeAll"],
+            "description": "The identifier for the unsubscribe request",
+        },
+        "subscriptionId": {
+            "$ref": "#/definitions/subscriptionId",
+            "type": ["string", "null"]
+        }, 
+        "requestId": {
+            "$ref": "#/definitions/requestId"
+        }
+    }
+}
+</pre>
+<p>The schema for unsubscribeSuccessResponse is:</p>
+<pre>
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "Unsubscribe Success Response",
+    "description": "The response sent from the server upon a successful subscription request",
+    "type": "object",
+    "required": ["action", "subscriptionId", "requestId", "timestamp"],
+    "properties": {
+        "action": {
+            "enum": [ "unsubscribe", "unsubscribeAll"],
+            "description": "The identifier for the unsubscribe request",
+        },
+        "subscriptionId": {
+            "$ref": "#/definitions/subscriptionId",
+            "type": ["string", "null"]
+        }, 
+        "requestId": {
+            "$ref": "#/definitions/requestId"
+        },
+        "timestamp": {
+            "$ref": "#/definitions/timestamp"
+        }
+    }
+}
+</pre>
+<p>The schema for unsubscribeErrorResponse is:</p>
+<pre>
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "Unsubscribe Error Response",
+    "description": "The response sent from the server upon an unsuccessful subscribe request",
+    "type": "object",
+    "required": ["action", "subscriptionId", "requestId", "error", "timestamp"],
+    "properties": {
+        "action": {
+            "enum": [ "unsubscribe", "unsubscribeAll"],
+            "description": "The identifier for the subscription request",
+        },
+        "subscriptionId": {
+            "$ref": "#/definitions/subscriptionId",
+            "type": ["string", "null"]
+        }, 
+        "requestId": {
+            "$ref": "#/definitions/requestId"
+        },
+        "error": {
+            "$ref": "#/definitions/error"
+        },
+        "timestamp": {
+            "$ref": "#/definitions/timestamp"
+        }
+    }
+}
+</pre>
 
-	receive <- {
-		"action": "unsubscribe",
-		"subscriptionId": "102",
-		"requestId": "5264",
-		"timestamp": &lt;DOMTimeStamp&gt;
-	}
-	</pre>
-	Unsubscribe from all subscriptions.
-	<pre class="highlight hljs javascript">
-	client -> {
-		"action": "unsubscribeAll",
-		"requestId": "3468"
-	}
+      <h4>Examples</h4>
 
-	receive <- {
-		"action": "unsubscribeAll",
-		"subscriptionId": null,
-		"requestId": "3468",
-		"timestamp": &lt;DOMTimeStamp&gt;
-	}
-	</pre>
-	Error case - invalid ID
-	<pre class="highlight hljs javascript">
-	client -> {
-		"action": "unsubscribe",
-		"subscriptionId": "3542",
-		"requestId": "7846"
-	}
-	receive <- {
-		"action": "unsubscribe",
+
+
+  Unsubscribe from a single subscription.
+  <pre class="highlight hljs javascript">
+  client -> {
+    "action": "unsubscribe",
+    "subscriptionId": "102",
+    "requestId": "5264"
+  }
+
+  receive <- {
+    "action": "unsubscribe",
+    "subscriptionId": "102",
+    "requestId": "5264",
+    "timestamp": &lt;DOMTimeStamp&gt;
+  }
+  </pre>
+  Unsubscribe from all subscriptions.
+  <pre class="highlight hljs javascript">
+  client -> {
+    "action": "unsubscribeAll",
+    "requestId": "3468"
+  }
+
+  receive <- {
+    "action": "unsubscribeAll",
+    "subscriptionId": null,
+    "requestId": "3468",
+    "timestamp": &lt;DOMTimeStamp&gt;
+  }
+  </pre>
+  Error case - invalid ID
+  <pre class="highlight hljs javascript">
+  client -> {
+    "action": "unsubscribe",
+    "subscriptionId": "3542",
+    "requestId": "7846"
+  }
+  receive <- {
+    "action": "unsubscribe",
     "subscriptionId": "3542",
     "requestId": "7846",
-		"error": { "number":404,
-			"reason": "invalid_subscriptionId",
-			"message": "The specified subscription was not found." },
+    "error": { "number":404,
+      "reason": "invalid_subscriptionId",
+      "message": "The specified subscription was not found." },
     "timestamp": &lt;DOMTimeStamp&gt;
-	}
-	</pre>
+  }
+  </pre>
 
-	<pre class="example highlight">
-		// send unsubscribe message
-		vehicle.send('{ "action": "unsubscribe", "subscriptionId": "102", "requestId": "5429" }');
+  <pre class="example highlight">
+    // send unsubscribe message
+    vehicle.send('{ "action": "unsubscribe", "subscriptionId": "102", "requestId": "5429" }');
 
-		// set handler
-		vehicle.onmesssage(function(event){
-			var msg = JSON.parse(event.data);
-			// success case
-			if(msg.hasOwnProperty("requestId") && msg.requestId == "5429"){
-				console.log("Successfully unsubscribed for id " + msg.subscriptionId);
-			// error case
-			} else if (msg.hasOwnProperty("error")) {
-				console.log("Unsuccessful unsubscribe. " + msg.error.message)
-			}
-		});
-	</pre>
+    // set handler
+    vehicle.onmesssage(function(event){
+      var msg = JSON.parse(event.data);
+      // success case
+      if(msg.hasOwnProperty("requestId") && msg.requestId == "5429"){
+        console.log("Successfully unsubscribed for id " + msg.subscriptionId);
+      // error case
+      } else if (msg.hasOwnProperty("error")) {
+        console.log("Unsuccessful unsubscribe. " + msg.error.message)
+      }
+    });
+  </pre>
         </section>
 
     <section>
@@ -1289,8 +1890,8 @@
       minimum changes. This can be implemented using the "filters"
       option.</p>
 
-	<p>Filters can only be applied for nodes in the VSS tree, not entire branches.
-	For example, a filter cannot be set on engine.*, however it can be set on engine.rpm.</p>
+  <p>Filters can only be applied for nodes in the VSS tree, not entire branches.
+  For example, a filter cannot be set on engine.*, however it can be set on engine.rpm.</p>
 
       <p>The subscription currently defaults to sending values to the
       client only onchange, however this may cause unnecessary
@@ -1298,46 +1899,46 @@
 
       <pre class="highlight hljs javascript">
         { "action": "subscribe", "path": "&lt;any_path&gt;",
-        	"filters": "{ &lt;insert_custom_tags&gt;  }"
-        	"requestId": "&lt;some_unique_value&gt;" }
+          "filters": "{ &lt;insert_custom_tags&gt;  }"
+          "requestId": "&lt;some_unique_value&gt;" }
       </pre>
       <p>Potential tags could include:</p>
       <ul>
-	<li>Interval - requests that the server provides a notification every 'n' milliseconds. This allows the client to reduce the
-	load on the server if the client does not need the data more frequently.</li>
-	<li>Range - provide a value only when within a given range</li>
-	<li>Minimum change - provide data when a value has changed by a specified amount</li>
+  <li>Interval - requests that the server provides a notification every 'n' milliseconds. This allows the client to reduce the
+  load on the server if the client does not need the data more frequently.</li>
+  <li>Range - provide a value only when within a given range</li>
+  <li>Minimum change - provide data when a value has changed by a specified amount</li>
       </ul>
 
       <p>If the filter is not set, or is unsupported by the server, the notification frequency is
       determined by the server.</p>
 
       <pre class="highlight hljs javascript">
-	//client receives data every 100ms
-	{ "action": "subscribe", "path": "&lt;any_path&gt;",
-        	"filters": { "interval": 100 },
-        	"requestId": "&lt;some_unique_value&gt;" }
+  //client receives data every 100ms
+  { "action": "subscribe", "path": "&lt;any_path&gt;",
+          "filters": { "interval": 100 },
+          "requestId": "&lt;some_unique_value&gt;" }
 
-	//client receives data when the value is between 100 and 200 (inclusive)
-	{ "action": "subscribe", "path": "&lt;any_path&gt;",
-        	"filters": { "range": { "above": 100, "below": 200 } },
-        	"requestId": "&lt;some_unique_value&gt;" }
+  //client receives data when the value is between 100 and 200 (inclusive)
+  { "action": "subscribe", "path": "&lt;any_path&gt;",
+          "filters": { "range": { "above": 100, "below": 200 } },
+          "requestId": "&lt;some_unique_value&gt;" }
 
-	//client receives data when the value is below 100 (inclusive)
-	{ "action": "subscribe", "path": "&lt;any_path&gt;",
-        	"filters": { "range": { "below": 100 } },
-        	"requestId": "&lt;some_unique_value&gt;" }
+  //client receives data when the value is below 100 (inclusive)
+  { "action": "subscribe", "path": "&lt;any_path&gt;",
+          "filters": { "range": { "below": 100 } },
+          "requestId": "&lt;some_unique_value&gt;" }
 
-	//client receives data when the value changes by 100 units
-	{ "action": "subscribe", "path": "&lt;any_path&gt;",
-        	"filters": { "minChange": 100 },
-        	"requestId": "&lt;some_unique_value&gt;" }
+  //client receives data when the value changes by 100 units
+  { "action": "subscribe", "path": "&lt;any_path&gt;",
+          "filters": { "minChange": 100 },
+          "requestId": "&lt;some_unique_value&gt;" }
 
-	//client receives data when the value is above 200 (inclusive)
-	//and the value changes by 20 units
-	{ "action": "subscribe", "path": "&lt;any_path&gt;",
-        	"filters": { "range": { "below": 200 }, "minChange": 20},
-        	"requestId": "&lt;some_unique_value&gt;" }
+  //client receives data when the value is above 200 (inclusive)
+  //and the value changes by 20 units
+  { "action": "subscribe", "path": "&lt;any_path&gt;",
+          "filters": { "range": { "below": 200 }, "minChange": 20},
+          "requestId": "&lt;some_unique_value&gt;" }
       </pre>
 
       <p>When the range filter is used a final message is sent when the value returned is outside
@@ -1345,21 +1946,21 @@
       be received at 101 to indicate that the value is now out of range.</p>
 
       <p>The client should not specify a minimum change amount that is smaller than it needs - in order to prevent
-	adding unnecessary load on the server. The server shall return a '429 - Too Many Request' error response if
-	it is unable to fulfil the request made by the client.</p>
+  adding unnecessary load on the server. The server shall return a '429 - Too Many Request' error response if
+  it is unable to fulfil the request made by the client.</p>
 
       <p>The section that follows defines the error responses that shall be supported by the server.</p>
       </section>
 
       <section>
-	<h3>Web Socket Closure</h3>
-	<p>The WebSocket may be closed by either the client or the
-	server by invoking the ‘close()’ method on the WebSocket
-	instance.</p>
+  <h3>Web Socket Closure</h3>
+  <p>The WebSocket may be closed by either the client or the
+  server by invoking the ‘close()’ method on the WebSocket
+  instance.</p>
 
-	<p>The following example shows the lifetime of a WebSocket on
-	the client:</p>
-	<pre class="example highlight">
+  <p>The following example shows the lifetime of a WebSocket on
+  the client:</p>
+  <pre class="example highlight">
 // Open the WebSocket
 var vehicle  = new WebSocket("wss://localhost:4343", "wvss1.0");
 
@@ -1368,29 +1969,39 @@ var vehicle  = new WebSocket("wss://localhost:4343", "wvss1.0");
 
 // Close the WebSocket
 vehicle.close();
-	</pre>
-	<p>The WebSocket server may terminate the WebSocket connection
-	if it has not received a request for a period determined by
-	the server. It is the client’s responsibility to handle this
-	gracefully and to recover and request new
-	subscriptions, where required.</p>
+  </pre>
+  <p>The WebSocket server may terminate the WebSocket connection
+  if it has not received a request for a period determined by
+  the server. It is the client’s responsibility to handle this
+  gracefully and to recover and request new
+  subscriptions, where required.</p>
       </section>
 
 
 
-      <section>
-	<h3>Errors</h3>
-	<p>If there is an error with any of the client’s requests, the
-	server responds with an error number, reason and
-	message.</p>
-
-      <pre class="idl">
-      interface Error {
-        attribute int number;
-        attribute DOMString reason;
-        attribute DOMString message;
-      };
-      </pre>
+<section>
+<h3>Errors</h3>
+<p>If there is an error with any of the client’s requests, the
+server responds with an error number, reason and
+message.</p>
+<h4></h4><h4></h4>
+<h4>Web IDL</h4>
+<pre class="idl">
+interface Error {
+  attribute int number;
+  attribute DOMString reason;
+  attribute DOMString message;
+};
+</pre>
+<h4>JSON Schema</h4>
+<pre>
+{
+  "error": {
+      "$ref": "#/definitions/error"
+  }
+}
+</pre>
+<h4>Examples</h4>
 
         <p>For some error codes, for example '401 (Unauthorised)' there can be more than one cause.
         The error number that is returned is the HTTP Status Code Number e.g. 401.
@@ -1398,136 +2009,136 @@ vehicle.close();
         can be used to distinguish between errors that have the same code (e.g. '401 Unauthorized)' but a difference cause.
         The error message is used to provide message text describing the cause in more detail.</p>
 
-	<pre class="highlight hljs javascript">
-	client -> { "action": "subscribe",
-		"filters": { "&lt;filter_expression&gt;" },
-		"path": "&lt;any_vss_path&gt;",
-		"requestId": "&lt;some_unique_value&gt;" }
-	receive on error <- {
-		"error":{ "number": "&lt;error_num&gt;",
-			"reason": "&lt;error_reason&gt;",
-			"message": "&lt;error_message&gt;" },
-		"path": "&lt;any_vss_path&gt;",
-		"requestId": "&lt;some_unique_value&gt;" }
-	</pre>
-	<p>The server implementation supports at least the error numbers and reasons listed in the table below.</p>
-	<table class="parameters">
-	  <tr>
-	    <th>Error&nbsp;Number&nbsp;(Code)</th>
-	    <th>Error Reason</th>
-	    <th>Error Message</th>
-	  </tr>
-	  <tr>
-	    <td>304 (Not Modified)</td>
+  <pre class="highlight hljs javascript">
+  client -> { "action": "subscribe",
+    "filters": { "&lt;filter_expression&gt;" },
+    "path": "&lt;any_vss_path&gt;",
+    "requestId": "&lt;some_unique_value&gt;" }
+  receive on error <- {
+    "error":{ "number": "&lt;error_num&gt;",
+      "reason": "&lt;error_reason&gt;",
+      "message": "&lt;error_message&gt;" },
+    "path": "&lt;any_vss_path&gt;",
+    "requestId": "&lt;some_unique_value&gt;" }
+  </pre>
+  <p>The server implementation supports at least the error numbers and reasons listed in the table below.</p>
+  <table class="parameters">
+    <tr>
+      <th>Error&nbsp;Number&nbsp;(Code)</th>
+      <th>Error Reason</th>
+      <th>Error Message</th>
+    </tr>
+    <tr>
+      <td>304 (Not Modified)</td>
         <td>not_modified</td>
-	    <td>No changes have been made by the server.</td>
-	  </tr>
-	  <tr>
-	    <td>400 (Bad Request)</td>
-	    <td>bad_request	</td>
-	    <td>The server is unable to fulfil the client request because the request is malformed.</td>
-	  </tr>
-	  <tr>
-	    <td>401 (Unauthorised)</td>
-	    <td>user_token_expired</td>
-	    <td>User token has expired.</td>
-	  </tr>
-	  <tr>
-	    <td>401 (Unauthorised)</td>
-	    <td>user_token_invalid</td>
-	    <td>User token is invalid.</td>
-	  </tr>
-	  <tr>
-	    <td>401 (Unauthorised)</td>
-	    <td>user_token_missing</td>
-	    <td>User token is missing.</td>
-	  </tr>
-	  <tr>
-	    <td>401 (Unauthorised)</td>
-	    <td>device_token_expired</td>
-	    <td>Device token has expired.</td>
-	  </tr>
-	  <tr>
-	    <td>401 (Unauthorised)</td>
-	    <td>device_token_invalid</td>
-	    <td>Device token is invalid.</td>
-	  </tr>
-	  <tr>
-	    <td>401 (Unauthorised)</td>
-	    <td>device_token_missing</td>
-	    <td>Device token is missing.</td>
-	  </tr>
-	  <tr>
-	    <td>401 (Unauthorised)</td>
-	    <td>too_many_attempts</td>
-	    <td>The client has failed to authenticate too many times.</td>
-	  </tr>	  
-	  <tr>
-	    <td>401 (Unauthorised)</td>
-	    <td>read_only</td>
-	    <td>The desired signal cannot be set since it is a read only signal.</td>
-	  </tr>	
-	  <tr>
-	    <td>403 (Forbidden)</td>
-	    <td>user_forbidden</td>
-	    <td>The user is not permitted to access the requested resource. Retrying does not help.</td>
-	  </tr>
-	  <tr>
-	    <td>403 (Forbidden)</td>
-	    <td>user_unknown</td>
-	    <td>The user is unknown. Retrying does not help.</td>
-	  </tr>
-	  <tr>
-	    <td>403 (Forbidden)</td>
-	    <td>device_forbidden</td>
-	    <td>The device is not permitted to access the requested resource. Retrying does not help.</td>
-	  </tr>
-	  <tr>
-	    <td>403 (Forbidden)</td>
-	    <td>device_unknown</td>
-	    <td>The device is unknown. Retrying does not help.</td>
-	  </tr>
-	  <tr>
-	    <td>404 (Not Found)</td>
-	    <td>invalid_path</td>
-	    <td>The specified data path does not exist.</td>
-	  </tr>
-	  <tr>
-	    <td>404 (Not Found)</td>
-	    <td>private_path</td>
-	    <td>The specified data path is private and the request is not authorised to access signals on this path.</td>
-	  </tr>
-	  <tr>
-	    <td>404 (Not Found)</td>
-	    <td>invalid_subscriptionId</td>
-	    <td>The specified subscription was not found.</td>
-	  </tr>
-	  <tr>
-	    <td>406 (Not Acceptable)</td>
-	    <td>not_acceptable</td>
-	    <td>The server is unable to generate content that is acceptable to the client</td>
-	  </tr>
-	  <tr>
-	    <td>429 (Too Many Requests)</td>
-	    <td>too_many_requests</td>
-	    <td>The client has sent the server too many requests in a given amount of time.</td>
-	  </tr>
-	  <tr>
-	    <td>502 (Bad Gateway)</td>
-	    <td>bad_gateway</td>
-	    <td>The server was acting as a gateway or proxy and received an invalid response from an upstream server.</td>
-	  </tr>
-	  <tr>
-	    <td>503 (Service Unavailable)</td>
-	    <td>service_unavailable</td>
-	    <td>The server is currently unable to handle the request due to a temporary overload or scheduled maintenance (which may be alleviated after some delay).</td>
-	  </tr>
-	  <tr>
-	    <td>504 (Gateway Timeout)</td>
-	    <td>gateway_timeout</td>
-	    <td>The server did not receive a timely response from an upstream server it needed to access in order to complete the request.</td>
-	  </tr>
-	</table>
+      <td>No changes have been made by the server.</td>
+    </tr>
+    <tr>
+      <td>400 (Bad Request)</td>
+      <td>bad_request </td>
+      <td>The server is unable to fulfil the client request because the request is malformed.</td>
+    </tr>
+    <tr>
+      <td>401 (Unauthorised)</td>
+      <td>user_token_expired</td>
+      <td>User token has expired.</td>
+    </tr>
+    <tr>
+      <td>401 (Unauthorised)</td>
+      <td>user_token_invalid</td>
+      <td>User token is invalid.</td>
+    </tr>
+    <tr>
+      <td>401 (Unauthorised)</td>
+      <td>user_token_missing</td>
+      <td>User token is missing.</td>
+    </tr>
+    <tr>
+      <td>401 (Unauthorised)</td>
+      <td>device_token_expired</td>
+      <td>Device token has expired.</td>
+    </tr>
+    <tr>
+      <td>401 (Unauthorised)</td>
+      <td>device_token_invalid</td>
+      <td>Device token is invalid.</td>
+    </tr>
+    <tr>
+      <td>401 (Unauthorised)</td>
+      <td>device_token_missing</td>
+      <td>Device token is missing.</td>
+    </tr>
+    <tr>
+      <td>401 (Unauthorised)</td>
+      <td>too_many_attempts</td>
+      <td>The client has failed to authenticate too many times.</td>
+    </tr>   
+    <tr>
+      <td>401 (Unauthorised)</td>
+      <td>read_only</td>
+      <td>The desired signal cannot be set since it is a read only signal.</td>
+    </tr> 
+    <tr>
+      <td>403 (Forbidden)</td>
+      <td>user_forbidden</td>
+      <td>The user is not permitted to access the requested resource. Retrying does not help.</td>
+    </tr>
+    <tr>
+      <td>403 (Forbidden)</td>
+      <td>user_unknown</td>
+      <td>The user is unknown. Retrying does not help.</td>
+    </tr>
+    <tr>
+      <td>403 (Forbidden)</td>
+      <td>device_forbidden</td>
+      <td>The device is not permitted to access the requested resource. Retrying does not help.</td>
+    </tr>
+    <tr>
+      <td>403 (Forbidden)</td>
+      <td>device_unknown</td>
+      <td>The device is unknown. Retrying does not help.</td>
+    </tr>
+    <tr>
+      <td>404 (Not Found)</td>
+      <td>invalid_path</td>
+      <td>The specified data path does not exist.</td>
+    </tr>
+    <tr>
+      <td>404 (Not Found)</td>
+      <td>private_path</td>
+      <td>The specified data path is private and the request is not authorised to access signals on this path.</td>
+    </tr>
+    <tr>
+      <td>404 (Not Found)</td>
+      <td>invalid_subscriptionId</td>
+      <td>The specified subscription was not found.</td>
+    </tr>
+    <tr>
+      <td>406 (Not Acceptable)</td>
+      <td>not_acceptable</td>
+      <td>The server is unable to generate content that is acceptable to the client</td>
+    </tr>
+    <tr>
+      <td>429 (Too Many Requests)</td>
+      <td>too_many_requests</td>
+      <td>The client has sent the server too many requests in a given amount of time.</td>
+    </tr>
+    <tr>
+      <td>502 (Bad Gateway)</td>
+      <td>bad_gateway</td>
+      <td>The server was acting as a gateway or proxy and received an invalid response from an upstream server.</td>
+    </tr>
+    <tr>
+      <td>503 (Service Unavailable)</td>
+      <td>service_unavailable</td>
+      <td>The server is currently unable to handle the request due to a temporary overload or scheduled maintenance (which may be alleviated after some delay).</td>
+    </tr>
+    <tr>
+      <td>504 (Gateway Timeout)</td>
+      <td>gateway_timeout</td>
+      <td>The server did not receive a timely response from an upstream server it needed to access in order to complete the request.</td>
+    </tr>
+  </table>
 
         <p>The server may optionally return additional error codes. It is expected that if this is the case, they are defined in the Server Documentation.
         Wherever possible the Server returns a standard HTTP error code where one has been defined for the error condition.
