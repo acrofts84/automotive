@@ -12,29 +12,35 @@
           editors:  [{ 
             name: "이원석(Wonsuk Lee)", company: "ETRI",
             url: "mailto:wonsuk.lee@etri.re.kr",
-            companyURL: "http://www.etri.re.kr" 
+            companyURL: "http://www.etri.re.kr",
+            w3cid: 34457
           }, {
             name: "Qing An", company: "Alibaba Group",
             url: "mailto:anqing.aq@alibaba-inc.com",
-            companyURL: "http://www.alibaba.com/" 
+            companyURL: "http://www.alibaba.com/",
+            w3cid: 76701
           }, {
             name: "Adam Crofts", company: "Jaguar Land Rover",
             url: "mailto:acrofts1@jaguarlandrover.com",
-            companyURL: "http://www.jaguarlandrover.com/" 
+            companyURL: "http://www.jaguarlandrover.com/",
+            w3cid: 74857
           }, {
             name: "Kevin Gavigan", company: "Jaguar Land Rover",
             url: "mailto:kgavigan@jaguarlandrover.com",
-            companyURL: "http://www.jaguarlandrover.com/"              
+            companyURL: "http://www.jaguarlandrover.com/",
+            w3cid: 71411
           }, {
             name: "Justin (Jong Seon) Park", company: "LG Electronics",
             url: "mailto:wonsuk.lee@etri.re.kr",
-            companyURL: "http://www.lg.co.kr/"              
+            companyURL: "http://www.lg.co.kr/",
+            w3cid: 51099
 	  }, {
             name: "Kevron Rees (until November 2014)", company: "Intel",
             url: "",
-            companyURL: "http://www.intel.com/"              
+            companyURL: "http://www.intel.com/",
+            w3cid: 61299
           }],
-          edDraftURI:           "http://rawgit.com/w3c/automotive/master/vehicle_data/data_spec.html",
+	  edDraftURI:           "https://w3c.github.io/automotive/vehicle_data/data_spec.html",
 
           otherLinks: [{
             key: 'Repository and Participation',
@@ -80,7 +86,7 @@
 <section class="informative">
   <h2>Introduction</h2>
   <p>Each data type is accessed through a <a href="http://www.w3.org/TR/vehicle-information-api/#vehicleinterface-interface">VehicleInterface</a> attribute available on the <a href="http://www.w3.org/TR/vehicle-information-api/#vehicle-interface">navigator.vehicle</a> object.  The attribute name corresponds with the Vehicle Type. For example, the attribute <a href="#widl-Vehicle-vehicleSpeed">"vehicle.vehicleSpeed"</a> is the interface to the data type <a href="#vehiclespeed-interface">"VehicleSpeed"</a>.</p>
-  
+  <p>Unless otherwise stated, SI units should be used where applicable for all attributes. Notable exceptions for this are temperature, which shall be specified in Celsius, and speed, which shall be specified in meters per hour.</p>  
   <p class="note">If an interface is provided, it MUST implement its non-nullable attributes otherwise it's optional. Many of the non-nullable attributes are found in interfaces with only one attribute (for example, <a href="#vehiclespeed-interface">"VehicleSpeed"</a>).</p>
 
 </section>
@@ -166,7 +172,7 @@
       <h2>Configuration and Identification Interfaces</h2>
 
       <p>Interfaces relating to vehicle configuration and identification including: make, type size, transmission
-      configuration, identification numbers, etc...</p>
+      configuration and identification numbers.</p>
       
       <p class="ednote">Integers have been used in favor of floating point values in order to preserve 
       precision during calculations (e.g. meters per hour instead of kilometers per hour).</p>
@@ -217,7 +223,7 @@
      <dt>readonly attribute DOMString? VIN</dt>
      <dd>MUST return the Vehicle Identification Number (ISO 3833)</dd>
      <dt>readonly attribute DOMString? WMI</dt>
-     <dd>MUST return the World Manufacture Identifier defined by SAE ISO 3780:2009.  3 characters.</dd>
+     <dd>MUST return the World Manufacturer Identifier defined by SAE ISO 3780:2009.  3 characters.</dd>
      <dt>readonly attribute VehicleTypeEnum? vehicleType</dt>
      <dd>MUST return vehicle type</dd>
      <dt>readonly attribute DOMString? brand</dt>
@@ -259,7 +265,17 @@
 <section>
   <h3><a>FuelConfiguration</a> Interface</h3>
   <p>The <a>FuelConfiguration</a> interface provides information about the fuel
-  configuration of a vehicle.</p>
+  configuration of a vehicle. A dictionary has been used to allow an 
+  associated array of values for vehicles which use multiple fuels.</p>
+
+  <dl class="idl" title="dictionary FuelOptions">
+    <dt>FuelTypeEnum fuelType</dt>
+    <dd>MUST return type of fuel used by the vehicle.</dd>
+    <dt>DOMString fuelTypeVariant</dt>
+    <dd>MUST return the specific variant of fuel required by the vehicle, such as Premium Unleaded Gasoline or E10 Ethanol.</dd>
+    <dt>Zone refuelPosition</dt>
+    <dd>MUST return location on the vehicle with access to the fuel door for the associated fuel type.</dd>
+  </dl>
 
   <dl title="enum FuelTypeEnum" class="idl">
     <dt>gasoline</dt>
@@ -279,12 +295,12 @@
   </dl>
 
   <dl title="interface FuelConfiguration : VehicleCommonDataType" class="idl">
-     <dt>readonly attribute FuelTypeEnum[]? fuelType</dt>
-     <dd>MUST return type of fuel used by vehicle. If the vehicle uses multiple fuels, fuelType returns an array of fuel types.</dd>
-     <dt>readonly attribute Zone? refuelPosition</dt>
-     <dd>MUST return location on the vehicle with access to the fuel door</dd>
-
+     <dt>readonly attribute any fuelOptions</dt>
+     <dd>MUST return a dictionary, as defined in <a>FuelOptions</a>, describing the fuel type, 
+     variant and refuel position used by the vehicle. If the vehicle uses multiple fuels, 
+     fuelOptions returns an array of <a>FuelOptions</a>.</dd>
   </dl>
+
 </section>
 
 <!-- Interface Transmission Configuration -->
@@ -331,13 +347,13 @@
   <dl title="interface SteeringWheelConfiguration : VehicleCommonDataType" class="idl">
      <dt>readonly attribute Zone? steeringWheelLocation</dt>
      <dd>MUST return the location on the steering wheel within the vehicle</dd> 
-     <dt>attribute unsigned short? steeringWheelTelescopingPosition</dt>
-     <dd>MUST return steering wheel position as percentage of extension from the dash
-     (Unit: percentage, 0%:closest to dash, 100%:farthest from dash)
+     <dt>attribute octet? steeringWheelTelescopingPosition</dt>
+     <dd>MUST return steering wheel position as a percentage of extension from the dash
+     (Unit: 0%: closest to dash, 100%: farthest from dash)
      </dd>
-     <dt>attribute unsigned short? steeringWheelPositionTilt</dt>
-     <dd>MUST return steering wheel position as percentage of tilt
-     (Unit: percentage, 0%:tilted lowest downward-facing position, 100%:highest upward-facing position)
+     <dt>attribute octet? steeringWheelPositionTilt</dt>
+     <dd>MUST return steering wheel position as a percentage of tilt
+     (Unit: 0%: tilted lowest downward-facing position, 100%: highest upward-facing position)
      </dd>
   </dl>
 </section>
@@ -350,8 +366,7 @@
 <!-- Running Status Interfaces -->
 <section id="runningstatus-interfaces">
       <h2>Running Status Interfaces</h2>
-      <p>Interfaces relating to the running/operation of a vehicle including:  speed, temperatures, acceleration,
-      etc...</p>
+      <p>Interfaces relating to the running/operation of a vehicle including: speed, temperatures and acceleration.</p>
       
       <p class="ednote">Integers have been used in favor of floating point values in order to preserve 
       precision during calculations (e.g. meters per hour instead of kilometers per hour).</p>
@@ -364,6 +379,8 @@
         <dd>MUST return VehicleSignalInterface for accessing <a>WheelSpeed</a></dd>
         <dt>readonly attribute VehicleSignalInterface engineSpeed</dt>
         <dd>MUST return VehicleSignalInterface for accessing <a>EngineSpeed</a> or undefined if not supported</dd>
+        <dt>readonly attribute VehicleSignalInterface vehiclePowerModeType</dt>
+        <dd>MUST return VehicleSignalInterface for accessing <a>VehiclePowerModeType</a></dd>
         <dt>readonly attribute VehicleSignalInterface powertrainTorque</dt>
         <dd>MUST return VehicleSignalInterface for accessing <a>PowertrainTorque</a></dd>
         <dt>readonly attribute VehicleSignalInterface acceleratorPedalPosition</dt>
@@ -394,20 +411,22 @@
         <dd>MUST return VehicleSignalInterface for accessing <a>EngineCoolant</a></dd>
         <dt>readonly attribute VehicleSignalInterface steeringWheel</dt>
         <dd>MUST return VehicleSignalInterface for accessing <a>SteeringWheel</a></dd>
+        <dt>readonly attribute VehicleSignalInterface wheelTick</dt>
+        <dd>MUST return VehicleSignalInterface for accessing <a>WheelTick</a></dd>  
         <dt>readonly attribute VehicleSignalInterface ignitionTime</dt>
         <dd>MUST return VehicleSignalInterface for accessing <a>IgnitionTime</a></dd>
         <dt>readonly attribute VehicleSignalInterface gyro</dt>
         <dd>MUST return VehicleSignalInterface for accessing <a>Gyro</a></dd>
         <dt>readonly attribute VehicleSignalInterface brakeOperation</dt>
         <dd>MUST return VehicleSignalInterface for accessing <a>BrakeOperation</a></dd>
-        <dt>readonly attribute VehicleSignalInterface wheelTick</dt>
-        <dd>MUST return VehicleSignalInterface for accessing <a>WheelTick</a></dd>
         <dt>readonly attribute VehicleSignalInterface buttonEvent</dt>
         <dd>MUST return VehicleSignalInterface for accessing <a>ButtonEvent</a></dd>
         <dt>readonly attribute VehicleSignalInterface drivingStatus</dt>
         <dd>MUST return VehicleSignalInterface for accessing <a>DrivingStatus</a></dd>
         <dt>readonly attribute VehicleSignalInterface nightMode</dt>
         <dd>MUST return VehicleSignalInterface for accessing <a>NightMode</a></dd>
+        <dt>readonly attribute VehicleSignalInterface startStopMode</dt>
+        <dd>MUST return VehicleSignalInterface for accessing <a>StartStopMode</a></dd>
       </dl>
 
 <!-- Interface VehicleSpeed -->
@@ -419,7 +438,7 @@
 
   <dl title="interface VehicleSpeed : VehicleCommonDataType"
   class="idl">
-    <dt>readonly attribute unsigned short speed</dt>
+    <dt>readonly attribute unsigned long speed</dt>
     <dd>MUST return vehicle speed (Unit: meters per hour)</dd>
   </dl>
 </section>
@@ -431,7 +450,7 @@
 
   <dl title="interface WheelSpeed : VehicleCommonDataType"
       class="idl">
-      <dt>readonly attribute unsigned short speed</dt>
+      <dt>readonly attribute unsigned long speed</dt>
       <dd>MUST return wheel speed (Unit: meters per hour)</dd>
       <dt>readonly attribute Zone? zone</dt>
       <dd>MUST return Zone for requested attribute</dd>
@@ -448,7 +467,7 @@
   <dl title="interface EngineSpeed : VehicleCommonDataType"
   class="idl">
     <dt>readonly attribute unsigned long speed</dt>
-    <dd>MUST return engine speed (Unit:  rotations per minute)</dd>
+    <dd>MUST return engine speed (Unit: rotations per minute)</dd>
   </dl>
 </section>
 
@@ -499,8 +518,8 @@
 
   <dl title="interface AcceleratorPedalPosition : VehicleCommonDataType"
   class="idl">
-    <dt>readonly attribute unsigned short value</dt>
-    <dd>MUST return accelerator pedal position as a percentage (Unit: percentage, 0%: released pedal, 100%: fully depressed)</dd>
+    <dt>readonly attribute octet value</dt>
+    <dd>MUST return accelerator pedal position as a percentage (Unit: 0%: released pedal, 100%: fully depressed)</dd>
   </dl>
 </section>
 
@@ -513,8 +532,8 @@
 
   <dl title="interface ThrottlePosition : VehicleCommonDataType"
   class="idl">
-    <dt>readonly attribute unsigned short value</dt>
-    <dd>MUST return throttle position as a percentage (Unit: percentage, 0%: closed, 100%: fully open)</dd>
+    <dt>readonly attribute octet value</dt>
+    <dd>MUST return throttle position as a percentage (Unit: 0%: closed, 100%: fully open)</dd>
   </dl>
 </section>
 
@@ -526,14 +545,14 @@
   class="idl">
     <dt>readonly attribute unsigned long distance</dt>
     <dd>MUST return distance travelled based on trip meter (Unit: meters)</dd>
-    <dt>readonly attribute unsigned short? averageSpeed</dt>
+    <dt>readonly attribute unsigned long? averageSpeed</dt>
     <dd>MUST return average speed based on trip meter (Unit: meters per hour)</dd>
     <dt>readonly attribute unsigned short? fuelConsumption</dt>
     <dd>MUST return fuel consumed based on trip meter (Unit: milliliters per 100 kilometers)</dd>
   </dl>
 
   <dl title="interface TripMeters : VehicleCommonDataType" class="idl">
-    <dt>readonly attribute Trip[] meters;
+    <dt>readonly attribute Trip[] meters</dt>
     <dd>MUST return trip meters</dd>
   </dl>
 </section>
@@ -579,7 +598,7 @@
   <dl title="interface CruiseControlStatus : VehicleCommonDataType" class="idl">
      <dt>readonly attribute boolean status</dt>
      <dd>MUST return whether or not the Cruise Control system is on (true) or off (false)</dd>
-     <dt>readonly attribute unsigned short speed</dt>
+     <dt>readonly attribute unsigned long speed</dt>
      <dd>MUST return target Cruise Control speed (Unit: meters per hour)</dd>
   </dl>
 </section>
@@ -651,8 +670,8 @@
   <h3><a>Fuel</a> Interface</h3>
   <p>The <a>Fuel</a> interface represents vehicle fuel status.
   <dl title="interface Fuel : VehicleCommonDataType" class="idl">
-     <dt>readonly attribute unsigned short? level</dt>
-     <dd>MUST return fuel level as a percentage of fullness</dd>
+     <dt>readonly attribute octet? level</dt>
+     <dd>MUST return fuel level as a percentage (Unit: 0%: empty, 100%: full)</dd>
      <dt>readonly attribute unsigned long? range</dt>
      <dd>MUST return estimated fuel range (Unit:  meters)</dd>
      <dt>readonly attribute unsigned long? instantConsumption</dt>
@@ -671,12 +690,12 @@
   <h3><a>EngineOil</a> Interface</h3>
   <p>The <a>EngineOil</a> interface represents engine oil status.
   <dl title="interface EngineOil : VehicleCommonDataType" class="idl">
-    <dt>readonly attribute unsigned short level</dt>
-    <dd>MUST return engine oil level (Unit: percentage, 0%: empty, 100%: full)</dd>
-     <dt>readonly attribute unsigned short lifeRemaining</dt>
-     <dd>MUST return remaining engine oil life (Unit: percentage, 0%:no life remaining, 100%: full life remaining)</dd>
-     <dt>readonly attribute long temperature</dt>
-     <dd>MUST return Engine Oil Temperature (Unit: celcius)</dd>
+    <dt>readonly attribute octet level</dt>
+    <dd>MUST return engine oil level as a percentage (Unit: 0%: empty, 100%: full)</dd>
+     <dt>readonly attribute octet lifeRemaining</dt>
+     <dd>MUST return remaining engine oil life as a percentage (Unit: 0%: no life remaining, 100%: full life remaining)</dd>
+     <dt>readonly attribute float temperature</dt>
+     <dd>MUST return Engine Oil Temperature (Unit: celsius)</dd>
      <dt>readonly attribute unsigned short pressure</dt>
      <dd>MUST return Engine Oil Pressure (Unit: kilopascals)</dd>
      <dt>readonly attribute boolean change</dt>
@@ -707,9 +726,9 @@
   <dl title="interface EngineCoolant : VehicleCommonDataType"
   class="idl">
     <dt>readonly attribute octet level</dt>
-    <dd>MUST return engine coolant level (Unit: percentage 0%: empty, 100%: full)</dd>
-    <dt>readonly attribute short temperature</dt>
-    <dd>MUST return engine coolant temperature (Unit: celcius)</dd>
+    <dd>MUST return engine coolant level as a percentage (Unit: 0%: empty, 100%: full)</dd>
+    <dt>readonly attribute float temperature</dt>
+    <dd>MUST return engine coolant temperature (Unit: celsius)</dd>
   </dl>
 </section>
 
@@ -723,7 +742,7 @@
   <dl title="interface SteeringWheel : VehicleCommonDataType"
   class="idl">
     <dt>readonly attribute short angle</dt>
-    <dd>MUST return angle of steering wheel off centerline (Unit: degrees -:degrees to the left, +:degrees to the right)</dd>
+    <dd>MUST return angle of steering wheel off centerline (Unit: degrees +:degrees to the left, -:degrees to the right)</dd>
   </dl>
 </section>
 
@@ -760,14 +779,14 @@
 <!-- Interface Gyro -->
 <section>
   <h3><a>Gyro</a> Interface</h3>
-  <p>The <a>Gyro</a> interface represents vehicle angular rates.
+  <p>The <a>Gyro</a> interface represents vehicle angular rates. This interface utilises the ISO 8855 Z-up standard, with positive X forward, positive Y to the left, and positive Z up. 
   <dl title="interface Gyro : VehicleCommonDataType" class="idl">
      <dt>readonly attribute short yawRate</dt>
-     <dd>MUST return yaw rate of vehicle.  (Unit:  degrees per second)</dd>
+     <dd>MUST return yaw rate of vehicle.  (Unit: degrees per second. +: Front of the vehicle moves left, -: Front of the vehicle moves right)</dd>
      <dt>readonly attribute short pitchRate</dt>
-     <dd>MUST return pitch rate of vehicle.  (Unit:  degrees per second)</dd>
+     <dd>MUST return pitch rate of vehicle.  (Unit: degrees per second. +: Front of the vehicle moves down, -: Front of the vehicle moves up)</dd>
      <dt>readonly attribute short rollRate</dt>
-     <dd>MUST return roll rate of vehicle. (Unit:  degrees per second)</dd>
+     <dd>MUST return roll rate of vehicle. (Unit: degrees per second. +: Right side of the vehicle moves down, -: Right side of the vehicle moves up)</dd>
   </dl>
 </section>
 
@@ -842,7 +861,7 @@
   <dl title="interface ButtonEvent : VehicleCommonDataType"
   class="idl">
     <dt>readonly attribute VehicleButton[] button</dt>
-    <dd>MUST return the button events that occured.  This supports multiple simultaneous button events.</dd>
+    <dd>MUST return the button events that occurred.  This supports multiple simultaneous button events.</dd>
   </dl>
 </section>
 
@@ -850,7 +869,7 @@
 <section>
   <h3><a>DrivingStatus</a> Interface</h3>
   <p>The <a>DrivingStatus</a> interface provides information about whether or not the vehicle is driving.  DrivingStatus is an abstract data type that may
-  combine several other data types such as vehicle speed, transmission gear, etc.  Typical usage would be to disable certain functions in the application
+  combine several other data types such as vehicle speed and transmission gear.  Typical usage would be to disable certain functions in the application
   if the vehicle is not safe to operate those functions to avoid driver distraction.</p>
   <dl title="interface DrivingStatus : VehicleCommonDataType" class="idl">
     <dt>readonly attribute boolean status</dt>
@@ -863,7 +882,7 @@
 <section>
   <h3><a>NightMode</a> Interface</h3>
   <p>The <a>NightMode</a> interface provides information about whether or not it is night time.  NightMode is an abstract data type that may
-  combine several other data types such as exterior brightness, time of day, sunrise/sunset, etc to determine whether or not it is night time.
+  combine several other data types such as exterior brightness, time of day and sunrise/sunset, to determine whether or not it is night time.
   Typical usage is to change the UI theme to a darker theme during the night.</p>
   <dl title="interface NightMode : VehicleCommonDataType" class="idl">
     <dt>readonly attribute boolean mode</dt>
@@ -915,6 +934,8 @@
         <dd>MUST return VehicleSignalInterface for accessing <a>BatteryStatus</a></dd>
         <dt>readonly attribute VehicleSignalInterface tire</dt>
         <dd>MUST return VehicleSignalInterface for accessing <a>Tire</a></dd>
+        <dt>readonly attribute VehicleSignalInterface troubleCode</dt>
+        <dd>MUST return VehicleSignalInterface for accessing <a>TroubleCode</a></dd>
         <dt>readonly attribute VehicleSignalInterface diagnostic</dt>
         <dd>MUST return VehicleSignalInterface for accessing <a>Diagnostic</a></dd>
       </dl>
@@ -941,9 +962,9 @@
   <dl title="interface TransmissionOil : VehicleCommonDataType"
   class="idl">
      <dt>readonly attribute octet? wear</dt>
-     <dd>MUST return transmission oil wear (Unit: percentage, 0%: no wear, 100%: completely worn).</dd>
-     <dt>readonly attribute byte? temperature</dt>
-     <dd>MUST return current temperature of the transmission oil(Unit: celsius).</dd>
+     <dd>MUST return transmission oil wear as a percentage (Unit: 0%: no wear, 100%: completely worn).</dd>
+     <dt>readonly attribute float? temperature</dt>
+     <dd>MUST return current temperature of the transmission oil (Unit: celsius).</dd>
   </dl>
 </section>
 
@@ -955,7 +976,7 @@
   <dl title="interface TransmissionClutch : VehicleCommonDataType"
   class="idl">
      <dt>readonly attribute octet wear</dt>
-     <dd>MUST return transmission clutch wear (Unit: percentage, 0%: no wear, 100%: completely worn).</dd>
+     <dd>MUST return transmission clutch wear as a percentage (Unit: 0%: no wear, 100%: completely worn).</dd>
   </dl>
 </section>
 
@@ -967,11 +988,11 @@
   <dl title="interface BrakeMaintenance : VehicleCommonDataType"
   class="idl">
      <dt>readonly attribute octet? fluidLevel</dt>
-     <dd>MUST return brake fluid level (Unit: percentage, 0%: empty, 100%: full).</dd>
+     <dd>MUST return brake fluid level as a percentage (Unit: 0%: empty, 100%: full).</dd>
      <dt>readonly attribute boolean? fluidLevelLow</dt>
      <dd>MUST return true if brake fluid level: low (true), not low (false)</dd>
      <dt>readonly attribute octet? padWear</dt>
-     <dd>MUST return brake pad wear (Unit: percentage, 0%: no wear, 100%: completely worn).</dd>
+     <dd>MUST return brake pad wear as a percentage (Unit: 0%: no wear, 100%: completely worn).</dd>
      <dt>readonly attribute boolean? brakesWorn</dt>
      <dd>MUST return true if brakes are worn: worn (true), not worn (false)</dd>
     <dt>readonly attribute Zone? zone</dt>
@@ -988,8 +1009,8 @@
   <dl title="interface WasherFluid : VehicleCommonDataType"
 
   class="idl">
-     <dt>readonly attribute unsigned short? level</dt>
-     <dd>MUST return washer fluid level (Unit: percentage, 0%: empty, 100%: full).</dd>
+     <dt>readonly attribute octet? level</dt>
+     <dd>MUST return washer fluid level as a percentage (Unit: 0%: empty, 100%: full).</dd>
      <dt>readonly attribute boolean? levelLow</dt>
      <dd>MUST return true if washer fluid level is low: low (true), not low: (false)</dd>
   </dl>
@@ -1019,13 +1040,83 @@
 
   class="idl">
      <dt>readonly attribute octet? chargeLevel</dt>
-     <dd>MUST return battery charge level (Unit: percentage, 0%: empty, 100%: full).</dd>
+     <dd>MUST return battery charge level as a percentage (Unit: 0%: empty, 100%: full).</dd>
      <dt>readonly attribute unsigned short? voltage</dt>
      <dd>MUST return battery voltage (Unit: volts).</dd>
      <dt>readonly attribute unsigned short? current</dt>
      <dd>MUST return battery current (Unit: amperes).</dd>
      <dt>readonly attribute Zone? zone</dt>
      <dd>MUST return Zone for requested attribute</dd>
+     
+
+     <dt>readonly attribute DOMstring? batteryType</dt>
+     <dd>MUST return battery type (SLI (starting, lighting, ignition), stop-start, hybrid relay, hybrid traction)</dd>
+     <dt>readonly attribute DOMstring? batteryChemistry</dt>
+     <dd>MUST return battery chemistry (Flooded lead acid, AGM, enhanced flooded, lithium)</dd>
+     <dt>readonly attribute short? batteryCCACapacity</dt>
+     <dd>MUST return battery cold cranking amp capacity</dd>
+     
+     <dt>readonly attribute short? batteryReserveCapacity</dt>
+     <dd>MUST return battery reserve capacity</dd>
+     <dt>readonly attribute short? batteryAmpHoursCapacity</dt>
+     <dd>MUST return battery amp-hours capacity</dd>
+     
+     <dt>readonly attribute float? batteryVoltageWake</dt>
+     <dd>MUST return battery voltage at system wake</dd>
+     <dt>readonly attribute float? batteryTempWake</dt>
+     <dd>MUST return battery temperature at system wake</dd>
+
+     <dt>readonly attribute short? engineCrankTime</dt>
+     <dd>MUST return duration (in seconds) of crank cycle for most recent engine start</dd>
+
+     <dt>readonly attribute float? batteryMinVoltCrank</dt>
+     <dd>MUST return minimum battery voltage during engine crank</dd>
+     
+     <dt>readonly attribute float? engineCoolantTemp</dt>
+     <dd>MUST return coolant temperature during engine crank</dd>
+     
+     <dt>readonly attribute float? engineAirTemp</dt>
+     <dd>MUST return ambient air temperature during engine crank</dd>
+     
+     <dt>readonly attribute float? batteryVoltageT0</dt>
+     <dd>MUST return battery voltage at engine start time = 0</dd>
+     <dt>readonly attribute float? batteryTempT0</dt>
+     <dd>MUST return battery temperature at engine start time = 0</dd>
+     
+     <dt>readonly attribute float? batteryVoltageT120</dt>
+     <dd>MUST return battery voltage at engine start time = 120</dd>
+     <dt>readonly attribute float? batteryTempT120</dt>
+     <dd>MUST return battery temperature at engine start time = 120</dd>
+
+     <dt>readonly attribute float[]? batteryVoltageTrip</dt>
+     <dd>MUST return battery voltage at 1200 second intervals during engine run time (trip)</dd>
+     <dt>readonly attribute float[]? batteryTempTrip</dt>
+     <dd>MUST return battery temperature at 1200 second intervals during engine run time (trip)</dd>
+     
+     <dt>readonly attribute float? batteryVoltageESD30</dt>
+     <dd>MUST return battery voltage at 30 seconds after engine shut down</dd>
+     <dt>readonly attribute float? batteryTempESD30</dt>
+     <dd>MUST return battery temperature at 30 seconds after engine shut down</dd>
+     
+     <dt>readonly attribute float? batteryVoltageESD450</dt>
+     <dd>MUST return battery voltage at 450 seconds after engine shut down</dd>
+     <dt>readonly attribute float? batteryTempESD450</dt>
+     <dd>MUST return battery temperature at 450 seconds after engine shut down</dd>
+
+     <dt>readonly attribute float? batteryVoltageESD870</dt>
+     <dd>MUST return battery voltage at 870 seconds after engine shut down</dd>
+     <dt>readonly attribute float? batteryTempESD870</dt>
+     <dd>MUST return battery temperature at 870 seconds after engine shut down</dd>
+
+     <dt>readonly attribute float? batteryVoltageESD1290</dt>
+     <dd>MUST return battery voltage at 1290 seconds after engine shut down</dd>
+     <dt>readonly attribute float? batteryTempESD1290</dt>
+     <dd>MUST return battery temperature at 1290 seconds after engine shut down</dd>
+
+     <dt>readonly attribute float? batteryVoltageESD1710</dt>
+     <dd>MUST return battery voltage at 1710 seconds after engine shut down</dd>
+     <dt>readonly attribute float? batteryTempESD1710</dt>
+     <dd>MUST return battery temperature at 1710 seconds after engine shut down</dd>
   </dl>
 </section>
 
@@ -1042,7 +1133,7 @@
      <dd>MUST return true if any tire pressure is low: pressure low (true), pressure not low (false)</dd>
      <dt>readonly attribute unsigned short? pressure</dt>
      <dd>MUST return tire pressure (Unit: kilopascal).</dd>
-     <dt>readonly attribute short? temperature</dt>
+     <dt>readonly attribute float? temperature</dt>
      <dd>MUST return tire temperature (Unit: celsius). </dd>
      <dt>readonly attribute Zone? zone</dt>
      <dd>MUST return Zone for requested attribute</dd>
@@ -1139,7 +1230,7 @@
   vehicle.
   <dl title="interface LanguageConfiguration : VehicleCommonDataType" class="idl">
      <dt>attribute DOMString? language</dt>
-     <dd>MUST return language identifier based on two-letter codes as specified in ISO 639-1</dd>
+     <dd>MUST return language identifier based on two-letter codes as specified in BCP47</dd>
   </dl>
 </section>
 
@@ -1173,11 +1264,11 @@
   in vehicle.
   <dl title="interface Mirror : VehicleCommonDataType" class="idl">
      <dt>attribute byte? mirrorTilt</dt>
-     <dd>MUST return mirror tilt position in percentage distance travelled, from downward-facing to
-     upward-facing position (Unit: percentage, 0%:center position, -100%:fully downward, 100%:full upward)</dd>
+     <dd>MUST return mirror tilt position as a percentage of distance travelled from downward-facing to
+     upward-facing position (Unit: 0%: center position, +100%: fully upward, -100%: fully downward)</dd>
      <dt>attribute byte? mirrorPan</dt>
-     <dd>MUST return mirror pan position in percentage distance travelled, from left to right
-     position (Unit: percentage, 0%:center position, -100%:fully left, 100%:fully right)</dd>
+     <dd>MUST return mirror pan position as a percentage of distance travelled from left to right
+     position (Unit: 0%: center position, +100%: fully left, -100%: fully right)</dd>
     <dt>readonly attribute Zone? zone</dt>
     <dd>MUST return Zone for requested attribute</dd>
 
@@ -1192,27 +1283,29 @@
   <dl title="interface SeatAdjustment : VehicleCommonDataType" class="idl">
      <dt>attribute octet? reclineSeatBack</dt>
 
-     <dd>MUST return seat back recline position as percent to completely reclined
-     (Unit: percentage, 0%: fully forward, 100%: fully reclined)</dd>
+     <dd>MUST return seat back recline position as a percentage to completely reclined
+     (Unit: 0%: fully forward, 100%: fully reclined)</dd>
 
      <dt>attribute octet? seatSlide</dt>
-     <dd>MUST return seat slide position as percentage of distance travelled away from forwardmost
-     position (Unit: percentage, 0%: farthest forward, 100%: farthest back)</dd>
+     <dd>MUST return seat slide position as a percentage of distance travelled away from forwardmost
+     position (Unit: 0%: farthest forward, 100%: farthest back)</dd>
+     
      <dt>attribute octet? seatCushionHeight</dt>
-
      <dd>MUST return seat cushion height position as a percentage of upward distance travelled
-     (Unit: percentage, 0%: lowest. 100%: highest)</dd>
+     (Unit: 0%: lowest. 100%: highest)</dd>
 
      <dt>attribute octet? seatHeadrest</dt>
      <dd> MUST return headrest position as a percentage of upward distance travelled
-     (Unit: percentage,  0%: lowest, 100%: highest)</dd>
+     (Unit: 0%: lowest, 100%: highest)</dd>
+     
      <dt>attribute octet? seatBackCushion</dt>
-
      <dd>MUST return back cushion position as a percentage of lumbar curvature
-     (Unit: percentage,  0%: flat, 100%: maximum curvature)</dd>
+     (Unit: 0%: flat, 100%: maximum curvature)</dd>
+     
      <dt>attribute octet? seatSideCushion</dt>
      <dd>MUST return sides of back cushion position as a percentage of curvature
-     (Unit: percentage,  0%: flat, 100%: maximum curvature)</dd>
+     (Unit: 0%: flat, 100%: maximum curvature)</dd>
+     
      <dt>readonly attribute Zone? zone</dt>
      <dd>MUST return Zone for requested attribute</dd>
   </dl>
@@ -1254,7 +1347,7 @@
      <dt>attribute octet? dashboardIllumination</dt>
 
      <dd>MUST return illumination of dashboard as a percentage
-     (Unit: percentage, 0%: none, 100%: maximum illumination)
+     (Unit: 0%: none, 100%: maximum illumination)
 
      </dd>
   </dl>
@@ -1314,7 +1407,7 @@
 <!-- AntilockBrakingSystem Interface  -->
 <section>
   <h3><a>AntilockBrakingSystem</a> Interface</h3> <p>The <a>AntilockBrakingSystem</a> interface
-  provides status of ABS(Antilock Braking System) status and setting.</p>
+  provides status of ABS (Antilock Braking System) status and setting.</p>
 
   <dl title="interface AntilockBrakingSystem : VehicleCommonDataType"
   class="idl">
@@ -1328,7 +1421,7 @@
 <!-- TractionControlSystem Interface  -->
 <section>
   <h3><a>TractionControlSystem</a> Interface</h3> <p>The <a>TractionControlSystem</a> interface
-  provides status of TCS(Traction Control System) status and setting.</p>
+  provides status of TCS (Traction Control System) status and setting.</p>
 
   <dl title="interface TractionControlSystem : VehicleCommonDataType"
   class="idl">
@@ -1342,7 +1435,7 @@
 <!-- ElectronicStabilityControl Interface  -->
 <section>
   <h3><a>ElectronicStabilityControl</a> Interface</h3> <p>The <a>ElectronicStabilityControl</a> interface
-  provides status of ESC(Electronic Stability Control) status and setting.</p>
+  provides status of ESC (Electronic Stability Control) status and setting.</p>
 
   <dl title="interface ElectronicStabilityControl : VehicleCommonDataType"
   class="idl">
@@ -1360,7 +1453,7 @@
 
   <dl title="interface TopSpeedLimit : VehicleCommonDataType"
   class="idl">
-    <dt>readonly attribute unsigned short speed</dt>
+    <dt>readonly attribute unsigned long speed</dt>
     <dd>MUST return vehicle top speed limit (Unit: meters per hour)</dd>
   </dl>
 </section>
@@ -1461,7 +1554,7 @@
     <dt>readonly attribute boolean seatbelt</dt>
     <dd>MUST return whether or not the seat belt is fastened: fastened (true) or unfastened (false)</dd>
     <dt>readonly attribute DOMString? occupantName</dt>
-    <dd>Must return occupant identifier</dd>
+    <dd>MUST return occupant identifier</dd>
     <dt>readonly attribute IdentificationType identificationType</dt>
     <dd>MUST return identification type</dd>
       <dt>readonly attribute Zone? zone</dt>
@@ -1580,9 +1673,9 @@
   <p>The <a>Sunroof</a> interface represents the current status of Sunroof.
   <dl title="interface Sunroof : VehicleCommonDataType" class="idl">
      <dt>attribute octet openness</dt>
-     <dd>MUST return current status of Sunroof as a percentage of openness (0%: closed, 100%: fully opened)</dd>
+     <dd>MUST return current status of Sunroof as a percentage of openness (Unit: 0%: closed, 100%: fully opened)</dd>
      <dt>attribute octet tilt</dt>
-     <dd>MUST return current status of Sunroof as a percentage of tilted (0%: closed, 100%: maximum tilted)</dd>
+     <dd>MUST return current status of Sunroof as a percentage of tilted (Unit: 0%: closed, 100%: maximum tilted)</dd>
     <dt>readonly attribute Zone? zone</dt>
     <dd>MUST return Zone for requested attribute</dd>
   </dl>
@@ -1624,7 +1717,7 @@
     <dt>attribute boolean? lock</dt>
     <dd>MUST return whether or not the window is locked: locked (true) or unlocked (false)</dd>
     <dt>attribute octet? openness</dt>
-    <dd>MUST return current status of the side window as a percentage of openness. (0%: Closed, 100%: Fully Opened)</dd>
+    <dd>MUST return current status of the side window as a percentage of openness. (Unit: 0%: Closed, 100%: Fully Opened)</dd>
     <dt>readonly attribute Zone? zone</dt>
     <dd>MUST return Zone for requested attribute</dd>
   </dl>
@@ -1652,7 +1745,7 @@
     <dd>MUST return current status of the direction of the air flow through the ventilation system</dd>
     <dt>attribute octet fanSpeedLevel</dt>
     <dd>MUST return current status of the fan speed of the air flowing (0: off, 1: weakest, 10: strongest )</dd>
-    <dt>attribute byte? targetTemperature</dt>
+    <dt>attribute float? targetTemperature</dt>
     <dd>MUST return current setting of the desired temperature (Unit: celsius)</dd>
     <dt>attribute boolean airConditioning</dt>
     <dd>MUST return current status of the air conditioning system: on (true) or off (false)</dd>
@@ -1692,6 +1785,8 @@
 
       <p>Interfaces relating to vision and parking such as lane departure and parking brake.</p>
 
+      <p class="ednote">For parkingSensors, it might need to revisit the naming because these sensor might be working while the car is running. For instance, distanceSensors, proximitySensors are might be other options. Depending on the name decision whole of interface might be changed. </p>
+
       <dl title="partial interface Vehicle" class="idl">
         <!-- maintenance types: -->
         <dt>readonly attribute VehicleSignalInterface laneDepartureDetection</dt>
@@ -1700,8 +1795,8 @@
         <dd>MUST return VehicleSignalInterface for accessing <a>Alarm</a></dd>
         <dt>readonly attribute VehicleSignalInterface parkingBrake</dt>
         <dd>MUST return VehicleSignalInterface for accessing <a>ParkingBrake</a></dd>
-        <dt>readonly attribute VehicleSignalInterface parkingLights</dt>
-        <dd>MUST return VehicleSignalInterface for accessing <a>ParkingLights</a></dd>
+        <dt>readonly attribute VehicleSignalInterface parkingSensors</dt>
+        <dd>MUST return VehicleSignalInterface for accessing <a>ParkingSensors</a></dd>         
       </dl>
 
 <!-- Interface LaneDepartureDetection (Vision) -->
@@ -1768,6 +1863,21 @@
   </dl>
  </section>
 
+ <!-- Interface Parking Sensors-->
+ <section>
+  <h3><a>ParkingSensors</a> Interface</h3>
+    <p>The <a>ParkingSensors</a> interface represents the current status of the parking sensors.</p>
+    <dl title="interface ParkingSensors : VehicleCommonDataType" class="idl">
+       <dt>readonly attribute short? distanceToObject</dt>
+       <dd>MUST return the approximate distance to the nearest object from the parking sensor. If no objects are sensed this should return null (Unit: millimeters)</dd>
+       <dt>readonly attribute boolean? active</dt>
+       <dd>MUST return true if parking sensors are currently in use</dd>
+       <dt>readonly attribute Zone? zone</dt>
+       <dd>MUST return Zone for requested attribute</dd>
+    </dl>
+ </section>
+
+
 </section>
 
 <!-- End of Vision and Parking interfaces -->
@@ -1790,10 +1900,10 @@
                 <h4>Use Cases for RunningStatus</h4>
                 <ul>
                     <li>
-                        Driver able to see driving performance information such as acceleration, speed, gears used, etc...
+                        Driver able to see driving performance information such as acceleration, speed and gears used.
                     </li>
                     <li>
-                        Driver able to see fuel economy, consumption, level, range, etc...
+                        Driver able to see fuel status such as economy, consumption, level and range.
                     </li>
                 </ul>
             </section>
@@ -1801,7 +1911,7 @@
                 <h4>Use Cases for Maintenance</h4>
                 <ul>
                     <li>
-                        Driver is able to see current state of key maintenance indicators (fluid states, battery charge, tire pressure, etc...) giving an snapshot of vehicle health while in and out of vehicle.
+                        Driver is able to see current state of key maintenance indicators such as fluid states, battery charge and tire pressure, and is given a snapshot of vehicle health while in and out of vehicle.
                     </li>
                     <li>
                         Driver receives alert notifications in and out of car letting him know of maintenance issues that need to be addressed.
@@ -1890,7 +2000,7 @@
   </body>
 </html>
 
-<!-- Interface  -----------------------
+<!-- Interface  
 <section>
   <h3><a></a> Interface</h3> <p>The <a></a>
   represents</p>

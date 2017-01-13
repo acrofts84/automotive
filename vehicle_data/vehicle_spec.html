@@ -12,29 +12,35 @@
           editors:  [{ 
             name: "이원석(Wonsuk Lee)", company: "ETRI",
             url: "mailto:wonsuk.lee@etri.re.kr",
-            companyURL: "http://www.etri.re.kr" 
+            companyURL: "http://www.etri.re.kr",
+            w3cid: 34457
           }, {
             name: "Qing An", company: "Alibaba Group",
             url: "mailto:anqing.aq@alibaba-inc.com",
-            companyURL: "http://www.alibaba.com/" 
+            companyURL: "http://www.alibaba.com/",
+            w3cid: 76701
           }, {
             name: "Adam Crofts", company: "Jaguar Land Rover",
             url: "mailto:acrofts1@jaguarlandrover.com",
-            companyURL: "http://www.jaguarlandrover.com/" 
+            companyURL: "http://www.jaguarlandrover.com/",
+            w3cid: 74857
           }, {
             name: "Kevin Gavigan", company: "Jaguar Land Rover",
             url: "mailto:kgavigan@jaguarlandrover.com",
-            companyURL: "http://www.jaguarlandrover.com/"              
+            companyURL: "http://www.jaguarlandrover.com/",
+            w3cid: 71411
           }, {
             name: "Justin (Jong Seon) Park", company: "LG Electronics",
             url: "mailto:wonsuk.lee@etri.re.kr",
-            companyURL: "http://www.lg.co.kr/"              
+            companyURL: "http://www.lg.co.kr/",
+            w3cid: 51099
           }, {
             name: "Kevron Rees (until November 2014)", company: "Intel",
             url: "",
-            companyURL: "http://www.intel.com/"              
+            companyURL: "http://www.intel.com/",
+            w3cid: 61299
           }],
-          edDraftURI:           "http://rawgit.com/w3c/automotive/master/vehicle_data/vehicle_spec.html",
+          edDraftURI:           "https://w3c.github.io/automotive/vehicle_data/vehicle_spec.html",
           wg:           "Automotive Working Group",
 
           otherLinks: [{
@@ -71,17 +77,17 @@
   <p>
   The W3C Vehicle Information API aims to enable connectivity through in-vehicle infotainment systems and vehicle data access protocols. This API can also be leveraged by web applications running on mobile devices that access the data resources of a connected passenger vehicle.</p>
   <p>
-  This specification does not dictate or describe the access protocol or transport method used for the data connection. Data may come from numerous sources including OBD-II, CAN, LIN, etc. Bluetooth, WiFi, or cloud connections are all possible.</p>
+  This specification does not dictate or describe the access protocol or transport method used for the data connection. Data may come from numerous sources, e.g. OBD-II, MOST, CAN and LIN. Bluetooth, WiFi, or cloud connections are all possible.</p>
   <p>
   The purpose of this specification is to promote an API that enables application development in a consistent manner across participating automotive manufacturers. It is recognized, however, that the mechanisms required for access or control of vehicle Properties may differ between automobile manufacturers, makes and models. Furthermore, different automobile manufacturers can expose different Properties that can be read or set by an application.</p>
   <p>
   As a result of these constraints, this specification shall allow for automobile manufacturer-specific extensions or restrictions. Extensions are only permitted for interfaces that are not already described by this API, and must be implemented to conform within the format and guidelines existing in this specification. If a Property is restricted, the automobile manufacturer would omit the optional feature in their implementation (see the <a>Availability</a> Section).
   </p>
   <p>
-  The target platform supported by the specification is exclusively passenger vehicles. Use of this specification for non-passenger applications (transportation, heavy machinery, marine, airline infotainment, military, etc.) is not prohibited, but is not covered in the design or content of the API and therefore may be insufficient.
+  The target platform supported by the specification is exclusively passenger vehicles. Use of this specification for non-passenger applications, e.g. transportation, heavy machinery, marine, airline infotainment, military, is not prohibited, but is not covered in the design or content of the API and therefore may be insufficient.
   </p>
   <p>
-  Initially, a typical use case of Vehicle Information might be the implementation of a 'Virtual Mechanic' application that provides vehicle status information such as tire pressure, engine oil level, washer fluid level, battery status, etc. Future use case innovations in transportation, safety, navigation, smart energy grid and consumer infotainment and customization are all possible through this specification.
+  Initially, a typical use case of Vehicle Information might be the implementation of a 'Virtual Mechanic' application that provides vehicle status information such as tire pressure, engine oil level, washer fluid level or battery status. Future use case innovations in transportation, safety, navigation, smart energy grid and consumer infotainment and customization are all possible through this specification.
   </p>
   <p>
   Web developers building interoperable applications based upon this API, will help empower a common web platform across consumer devices and passenger vehicles consistent with the Web of Things.
@@ -198,13 +204,23 @@
 
   <dl title="enum ZonePosition" class="idl">
     <dt>front</dt>
-    <dt>middle</dt>
-    <dd>the middle position of a row.
-    <dt>right</dt>
-    <dt>left</dt>
-    <dt>rear</dt>
+    <dd>the front of the vehicle in the longitudinal-axis.</dd>
     <dt>center</dt>
-    <dd>the center row</dd>
+    <dd>the center of the vehicle in the longitudinal-axis.</dd>
+    <dt>rear</dt>
+    <dd>the rear of the vehicle in the longitudinal-axis.</dd>
+    <dt>left</dt>
+    <dd>the left side of the vehicle in the horizontal-axis.</dd>
+    <dt>middle</dt>
+    <dd>the middle of the vehicle in the horizontal-axis.</dd>
+    <dt>right</dt>
+    <dd>the right side of the vehicle in the horizontal-axis.</dd>
+    <dt>top</dt>
+    <dd>the top layer of the vehicle in the vertical-axis.</dd>
+    <dt>central</dt>
+    <dd>the central layer of the vehicle in the vertical-axis.</dd>
+    <dt>bottom</dt>
+    <dd>the bottom layer of the vehicle in the vertical-axis.</dd>
   </dl>
 
   <dl title="interface Zone"
@@ -259,7 +275,7 @@
      <dt>readonly attribute VehicleError error</dt>
      <dd>MUST return VehicleError</dd>
      <dt>readonly attribute DOMString message</dt>
-     <dd>MUST return user-readable error message</dd>
+     <dd>MUST return an error message describing the details of the error encountered. This is primarily intended for debugging and developers should not use it directly in their application user interface</dd>
   </dl>
 </section>
 
@@ -291,7 +307,7 @@
 <!-- Interface VehicleConfigurationInterface -->
 <section>
   <h3><a>VehicleConfigurationInterface</a> Interface</h3> <p>The <a>VehicleConfigurationInterface</a>
-  interface is to be used to provide access to static vehicle information that never changes: external dimensions, identification, transmission type etc... </p>
+  interface is to be used to provide access to static vehicle information that never changes, e.g. external dimensions, identification or transmission type. </p>
 
   <dl title="[NoInterfaceObject] interface VehicleConfigurationInterface : VehicleInterface"
   class="idl">
